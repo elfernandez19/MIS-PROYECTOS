@@ -1,5 +1,5 @@
 .bodypagprincipal {
-    background-color: aqua;
+    background-color: white;
     font-family: Arial, sans-serif;
 }
 
@@ -8,13 +8,13 @@
     font-size: 2.7rem;
     font-weight: 700;
     letter-spacing: 3px;
-    color: #00ffff;
-    background: linear-gradient(45deg, #0104a5, #4747ff, #0104a5);
+    color: #223C4F;
+    background: linear-gradient(45deg, #273164, #214BA3, #273164);
     padding: 25px 40px;
     text-align: center;
     border-radius: 15px;
-    text-shadow: 0 0 15px #00ffff;
-    border: 1px solid #00ffff;
+    text-shadow: 0 0 15px #ffffff;
+    border: 1px solid #273164;
     text-transform: uppercase;
     text-align: center;
 }
