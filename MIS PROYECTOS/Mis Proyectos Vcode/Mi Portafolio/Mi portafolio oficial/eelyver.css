@@ -1,0 +1,64 @@
+:root {
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #dfe0e3;
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    padding: 1rem 0.5rem;
+}
+
+h1 {
+    text-shadow: 2px 2px 4px rgba(0, 13, 192, 0.9);
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    letter-spacing: 0.08em;
+    font-family: "Tourney", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+        "wdth" 100;
+}
+
+h1:hover {
+    text-shadow: 2px 2px 4px rgba(165, 0, 0, 0.9);
+}
+
+header nav {
+    flex: 1;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+li a {
+    text-decoration: none;
+    color: #0d1aa8;
+    font-weight: 700;
+}
+
+li a:hover {
+    text-shadow: 2px 2px 4px rgba(165, 0, 0, 0.9);
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #9ea1a6;
+    margin: 0;
+}

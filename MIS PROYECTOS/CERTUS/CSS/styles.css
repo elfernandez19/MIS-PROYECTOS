@@ -1,0 +1,79 @@
+body {
+    background-color: grey;
+}
+
+h1 {
+    color: blue;
+    font-size: 50px;
+    text-align: center;
+    background-color: gray;
+    border: 3px solid black;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 40px;
+}
+
+p.estilo1 {
+    color: red;
+    font-size: 20px;
+    border-left: 10px;
+}
+
+p.estilo2 {
+    color: purple;
+    font-size: 20px;
+    text-shadow: 2px 2px 4px rgba(31, 29, 29, 0.87); 
+}
+
+.verde{
+    background-color: green;
+}
+
+.rojo{
+    background-color: red;
+}
+
+.amarillo{
+    background-color: yellow;
+}
+
+.rosado{
+    background-color: pink;
+}
+
+.azul{
+    background-color: blue;
+}
+
+.anaranjado{
+    background-color: orange;
+}
+
+.celeste{
+    background-color: cyan;
+}
+
+.morado{
+    background-color: purple;
+}
+
+.dorado{
+    background-color: gold;
+}
+
+.lila{
+    background-color: violet;
+}
+
+.parpadeo1 {
+            text-align: center;
+            color: black;
+            font-size: 70px;
+            animation: parpadear 1s infinite;
+        }
+
+        @keyframes parpadear {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
