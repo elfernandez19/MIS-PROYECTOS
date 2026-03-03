@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marino — Panel Administrador</title>
+  <link rel="stylesheet" href="styles-admin.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     LOGIN SCREEN
+═══════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">MARI<span>N</span>O</div>
+    <div class="login-sub">Panel Administrador</div>
+
+    <label class="login-label">Usuario</label>
+    <input type="text" class="login-input" id="login-user" placeholder="Usuario" autocomplete="off">
+
+    <label class="login-label">Contraseña</label>
+    <input type="password" class="login-input" id="login-pass" placeholder="••••••••">
+
+    <button class="login-btn" onclick="doLogin()">Ingresar</button>
+    <div class="login-error" id="login-error">Usuario o contraseña incorrectos.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     DASHBOARD
+═══════════════════════════════════ -->
+<div id="dashboard">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">MARI<span>N</span>O</div>
+    <div class="topbar-right">
+      <div class="admin-name">Admin: <strong>Edinson Marino</strong></div>
+      <button class="logout-btn" onclick="doLogout()">Salir</button>
+    </div>
+  </div>
+
+  <div class="dash-content">
+
+    <!-- PERIOD SELECTOR -->
+    <div class="period-bar">
+      <span class="period-label">Ver por:</span>
+      <button class="period-btn active" id="btn-dia"    onclick="setPeriod('dia')">Hoy</button>
+      <button class="period-btn"        id="btn-semana" onclick="setPeriod('semana')">Esta Semana</button>
+      <button class="period-btn"        id="btn-mes"    onclick="setPeriod('mes')">Este Mes</button>
+      <button class="period-btn"        id="btn-year"   onclick="setPeriod('year')">Este Año</button>
+      <button class="period-btn"        id="btn-todo"   onclick="setPeriod('todo')">Todo</button>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Ventas</div>
+        <div class="kpi-value gold" id="kpi-total">S/0.00</div>
+        <div class="kpi-sub" id="kpi-period-label">Hoy</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pedidos Realizados</div>
+        <div class="kpi-value" id="kpi-orders">0</div>
+        <div class="kpi-sub">Número de transacciones</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Ticket Promedio</div>
+        <div class="kpi-value teal" id="kpi-avg">S/0.00</div>
+        <div class="kpi-sub">Por pedido</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Mejor Servicio</div>
+        <div class="kpi-value purple" id="kpi-top" style="font-size:1.3rem;">—</div>
+        <div class="kpi-sub">Por ingresos</div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Ventas por Período <span id="chart-period-label">— Hoy</span></div>
+        <canvas id="chart-bar" height="220"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Distribución por Servicio</div>
+        <canvas id="chart-pie" height="220"></canvas>
+      </div>
+    </div>
+
+    <!-- BREAKDOWN BY SERVICE -->
+    <div class="breakdown-grid">
+      <div class="breakdown-card">
+        <div class="bc-service rest">🍽️ Restaurante</div>
+        <div class="bc-total" id="bc-rest">S/0.00</div>
+        <div class="bc-orders" id="bc-rest-n">0 pedidos</div>
+      </div>
+      <div class="breakdown-card">
+        <div class="bc-service barber-s">✂️ Barber Los Sauces</div>
+        <div class="bc-total" id="bc-sauces">S/0.00</div>
+        <div class="bc-orders" id="bc-sauces-n">0 citas</div>
+      </div>
+      <div class="breakdown-card">
+        <div class="bc-service barber-p">✂️ Barber La Pradera</div>
+        <div class="bc-total" id="bc-pradera">S/0.00</div>
+        <div class="bc-orders" id="bc-pradera-n">0 citas</div>
+      </div>
+    </div>
+
+    <!-- RECENT ORDERS -->
+    <div class="orders-table-card">
+      <div class="chart-title">Últimos Pedidos / Citas</div>
+      <div id="orders-table-wrap"></div>
+    </div>
+
+  </div><!-- end dash-content -->
+
+  <div class="dash-footer">© 2025 Marino · Panel Exclusivo Administrador · Edinson Marino</div>
+</div>
+
+<script>
+// ─────────────────────────────────────
+// CREDENTIALS (change as needed)
+// ─────────────────────────────────────
+const ADMIN_USER = 'edinson';
+const ADMIN_PASS = 'marino2026';
+
+let currentPeriod = 'dia';
+let barChart = null;
+let pieChart = null;
+
+// ─────────────────────────────────────
+// LOGIN
+// ─────────────────────────────────────
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const p = document.getElementById('login-pass').value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    initDashboard();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') doLogin();
+});
+
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+// ─────────────────────────────────────
+// LOAD ORDERS
+// ─────────────────────────────────────
+function loadOrders() {
+  try { return JSON.parse(localStorage.getItem('marino_orders') || '[]'); }
+  catch { return []; }
+}
+
+function filterByPeriod(orders, period) {
+  const now = new Date();
+  return orders.filter(o => {
+    const d = new Date(o.date);
+    if (period === 'dia') {
+      return d.toDateString() === now.toDateString();
+    } else if (period === 'semana') {
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0,0,0,0);
+      return d >= startOfWeek;
+    } else if (period === 'mes') {
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    } else if (period === 'year') {
+      return d.getFullYear() === now.getFullYear();
+    }
+    return true; // 'todo'
+  });
+}
+
+// ─────────────────────────────────────
+// DASHBOARD INIT
+// ─────────────────────────────────────
+function initDashboard() {
+  setPeriod('dia');
+}
+
+function setPeriod(period) {
+  currentPeriod = period;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + period)?.classList.add('active');
+
+  const labels = { dia: 'Hoy', semana: 'Esta Semana', mes: 'Este Mes', year: 'Este Año', todo: 'Todo el tiempo' };
+  document.getElementById('kpi-period-label').textContent = labels[period];
+  document.getElementById('chart-period-label').textContent = '— ' + labels[period];
+
+  renderDashboard(period);
+}
+
+function renderDashboard(period) {
+  const allOrders = loadOrders();
+  const orders = filterByPeriod(allOrders, period);
+
+  // ── KPIs ──
+  const total = orders.reduce((s, o) => s + (o.total || 0), 0);
+  const count = orders.length;
+  const avg = count > 0 ? total / count : 0;
+
+  document.getElementById('kpi-total').textContent  = `S/${total.toFixed(2)}`;
+  document.getElementById('kpi-orders').textContent = count;
+  document.getElementById('kpi-avg').textContent    = `S/${avg.toFixed(2)}`;
+
+  // Best service
+  const byService = groupByService(orders);
+  let topService = '—';
+  let topVal = 0;
+  Object.entries(byService).forEach(([svc, data]) => {
+    if (data.total > topVal) { topVal = data.total; topService = svcLabel(svc); }
+  });
+  document.getElementById('kpi-top').textContent = topService;
+
+  // ── BREAKDOWN ──
+  const rest    = byService['restaurante']    || { total: 0, count: 0 };
+  const sauces  = byService['barber_sauces']  || { total: 0, count: 0 };
+  const pradera = byService['barber_pradera'] || { total: 0, count: 0 };
+
+  document.getElementById('bc-rest').textContent    = `S/${rest.total.toFixed(2)}`;
+  document.getElementById('bc-rest-n').textContent  = `${rest.count} pedido${rest.count!==1?'s':''}`;
+  document.getElementById('bc-sauces').textContent  = `S/${sauces.total.toFixed(2)}`;
+  document.getElementById('bc-sauces-n').textContent= `${sauces.count} cita${sauces.count!==1?'s':''}`;
+  document.getElementById('bc-pradera').textContent = `S/${pradera.total.toFixed(2)}`;
+  document.getElementById('bc-pradera-n').textContent=`${pradera.count} cita${pradera.count!==1?'s':''}`;
+
+  // ── BAR CHART ──
+  renderBarChart(orders, period);
+
+  // ── PIE CHART ──
+  renderPieChart(rest, sauces, pradera);
+
+  // ── TABLE ──
+  renderTable(orders);
+}
+
+function groupByService(orders) {
+  const result = {};
+  orders.forEach(o => {
+    if (!result[o.service]) result[o.service] = { total: 0, count: 0 };
+    result[o.service].total += (o.total || 0);
+    result[o.service].count++;
+  });
+  return result;
+}
+
+function svcLabel(svc) {
+  const m = { restaurante: 'Restaurante', barber_sauces: 'Barber Sauces', barber_pradera: 'Barber Pradera' };
+  return m[svc] || svc;
+}
+
+// ─────────────────────────────────────
+// BAR CHART
+// ─────────────────────────────────────
+function renderBarChart(orders, period) {
+  const ctx = document.getElementById('chart-bar').getContext('2d');
+  if (barChart) barChart.destroy();
+
+  let labels = [];
+  let restData = [], saucesData = [], praderaData = [];
+
+  if (period === 'dia') {
+    // Group by hour
+    labels = Array.from({length:24},(_,i)=>`${String(i).padStart(2,'0')}h`);
+    restData    = new Array(24).fill(0);
+    saucesData  = new Array(24).fill(0);
+    praderaData = new Array(24).fill(0);
+    orders.forEach(o => {
+      const h = new Date(o.date).getHours();
+      if (o.service==='restaurante')    restData[h]    += o.total||0;
+      if (o.service==='barber_sauces')  saucesData[h]  += o.total||0;
+      if (o.service==='barber_pradera') praderaData[h] += o.total||0;
+    });
+    // Show only hours 6-23
+    labels      = labels.slice(6);
+    restData    = restData.slice(6);
+    saucesData  = saucesData.slice(6);
+    praderaData = praderaData.slice(6);
+  } else if (period === 'semana') {
+    const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    labels = days;
+    restData = new Array(7).fill(0);
+    saucesData = new Array(7).fill(0);
+    praderaData = new Array(7).fill(0);
+    orders.forEach(o => {
+      const d = new Date(o.date).getDay();
+      if (o.service==='restaurante')    restData[d]    += o.total||0;
+      if (o.service==='barber_sauces')  saucesData[d]  += o.total||0;
+      if (o.service==='barber_pradera') praderaData[d] += o.total||0;
+    });
+  } else if (period === 'mes') {
+    const now = new Date();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+    labels = Array.from({length:daysInMonth},(_,i)=>String(i+1));
+    restData    = new Array(daysInMonth).fill(0);
+    saucesData  = new Array(daysInMonth).fill(0);
+    praderaData = new Array(daysInMonth).fill(0);
+    orders.forEach(o => {
+      const d = new Date(o.date).getDate() - 1;
+      if (o.service==='restaurante')    restData[d]    += o.total||0;
+      if (o.service==='barber_sauces')  saucesData[d]  += o.total||0;
+      if (o.service==='barber_pradera') praderaData[d] += o.total||0;
+    });
+  } else {
+    // year / todo - group by month
+    const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    labels = months;
+    restData    = new Array(12).fill(0);
+    saucesData  = new Array(12).fill(0);
+    praderaData = new Array(12).fill(0);
+    orders.forEach(o => {
+      const m = new Date(o.date).getMonth();
+      if (o.service==='restaurante')    restData[m]    += o.total||0;
+      if (o.service==='barber_sauces')  saucesData[m]  += o.total||0;
+      if (o.service==='barber_pradera') praderaData[m] += o.total||0;
+    });
+  }
+
+  barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Restaurante',    data: restData,    backgroundColor: 'rgba(180,80,255,.7)',  borderColor: '#b050ff', borderWidth:1 },
+        { label: 'Barber Sauces',  data: saucesData,  backgroundColor: 'rgba(0,204,122,.65)', borderColor: '#00cc7a', borderWidth:1 },
+        { label: 'Barber Pradera', data: praderaData, backgroundColor: 'rgba(77,184,255,.65)',borderColor: '#4db8ff', borderWidth:1 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: '#6870a0', font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` S/${ctx.parsed.y.toFixed(2)}`
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#6870a0', font:{size:10} }, grid: { color: 'rgba(255,255,255,.04)' } },
+        y: { ticks: { color: '#6870a0', font:{size:10}, callback: v => `S/${v}` }, grid: { color: 'rgba(255,255,255,.04)' } }
+      }
+    }
+  });
+}
+
+// ─────────────────────────────────────
+// PIE CHART
+// ─────────────────────────────────────
+function renderPieChart(rest, sauces, pradera) {
+  const ctx = document.getElementById('chart-pie').getContext('2d');
+  if (pieChart) pieChart.destroy();
+
+  const hasData = rest.total > 0 || sauces.total > 0 || pradera.total > 0;
+
+  pieChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Restaurante', 'Barber Sauces', 'Barber Pradera'],
+      datasets: [{
+        data: hasData ? [rest.total, sauces.total, pradera.total] : [1,1,1],
+        backgroundColor: hasData
+          ? ['rgba(180,80,255,.8)','rgba(0,204,122,.8)','rgba(77,184,255,.8)']
+          : ['rgba(255,255,255,.05)','rgba(255,255,255,.05)','rgba(255,255,255,.05)'],
+        borderColor: hasData ? ['#b050ff','#00cc7a','#4db8ff'] : 'transparent',
+        borderWidth: 2,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '60%',
+      plugins: {
+        legend: { position:'bottom', labels:{ color:'#6870a0', font:{size:11}, padding:16 } },
+        tooltip: {
+          callbacks: {
+            label: ctx => hasData ? ` S/${ctx.parsed.toFixed(2)}` : ' Sin datos'
+          }
+        }
+      }
+    }
+  });
+}
+
+// ─────────────────────────────────────
+// TABLE
+// ─────────────────────────────────────
+function renderTable(orders) {
+  const wrap = document.getElementById('orders-table-wrap');
+  if (!orders.length) {
+    wrap.innerHTML = `<div class="no-data"><div class="nd-icon">📊</div><p>No hay pedidos en este período.<br>Los pedidos aparecerán aquí automáticamente<br>cuando los clientes los realicen desde la web.</p></div>`;
+    return;
+  }
+
+  const sorted = [...orders].sort((a,b) => new Date(b.date)-new Date(a.date)).slice(0,50);
+  const tagClass = { restaurante:'rest', barber_sauces:'barber-s', barber_pradera:'barber-p' };
+  const tagName  = { restaurante:'Restaurante', barber_sauces:'Barber Sauces', barber_pradera:'Barber Pradera' };
+
+  wrap.innerHTML = `
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Servicio</th>
+          <th>Cliente</th>
+          <th>Items</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${sorted.map(o => {
+          const d = new Date(o.date);
+          const dateStr = `${d.toLocaleDateString('es-PE')} ${d.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}`;
+          const items = (o.items||[]).map(i=>`${i.qty||1}x ${i.name}`).join(', ');
+          return `<tr>
+            <td style="color:var(--muted);font-size:.78rem;">${dateStr}</td>
+            <td><span class="tag ${tagClass[o.service]||'rest'}">${tagName[o.service]||o.service}</span></td>
+            <td>${o.customer?.name||'—'}</td>
+            <td style="font-size:.78rem;color:var(--muted);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${items||'—'}</td>
+            <td><span class="tag-price">S/${(o.total||0).toFixed(2)}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ─────────────────────────────────────
+// AUTO REFRESH every 30s
+// ─────────────────────────────────────
+setInterval(() => {
+  if (document.getElementById('dashboard').style.display === 'block') {
+    renderDashboard(currentPeriod);
+  }
+}, 30000);
+</script>
+</body>
+</html>

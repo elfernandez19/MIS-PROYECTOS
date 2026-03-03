@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marino Restaurante — Carta y Pedidos</title>
+  <link rel="stylesheet" href="styles-rest.css">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">MARI<span>N</span>O</a>
+    <a href="index.html" class="nav-back">← Volver al inicio</a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-wave"></div>
+    <div class="hero-content">
+      <p class="hero-tag">// Restaurante · Chiclayo</p>
+      <h1 class="hero-title">MARINO<br><span>RESTAURANTE</span></h1>
+      <p class="hero-desc">
+        Sabor auténtico con identidad chiclaya. Ceviche, alitas, combos y mucho más. Delivery gratis a Sauces, Garita y Ensenada.
+      </p>
+      <div class="hero-info">
+        <div class="info-item"><span>📍</span> Urb. Los Sauces Calle 11 Mz K Lote 4</div>
+        <div class="info-item"><span>📞</span> <a href="tel:990854675">990 854 675</a></div>
+        <div class="info-item"><span>🛵</span> Delivery gratis: Sauces, Garita y Ensenada</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" data-tab="manana" onclick="switchTab('manana')">🌅 Carta Mañana</button>
+    <button class="tab-btn" data-tab="noche" onclick="switchTab('noche')">🌙 Carta Noche</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PANEL: MAÑANA
+  ═══════════════════════════════════════ -->
+  <div class="menu-panel active" id="panel-manana">
+
+    <!-- COMBOS -->
+    <div class="menu-section reveal">
+      <div class="menu-section-title">Combos Marinos</div>
+      <div class="menu-items">
+
+        <div class="menu-item" id="row-m1">
+          <div class="mi-info">
+            <div class="mi-name">Dúo Marino</div>
+            <div class="mi-desc">Ceviche carretillero + Chicharrón de pescado o Arroz c/mariscos + Inca Kola o Coca Cola 500ml</div>
+          </div>
+          <div class="mi-price">S/30</div>
+          <div class="mi-qty">
+            <button class="qty-btn" onclick="changeQty('m1','Dúo Marino',30,-1)">−</button>
+            <span class="qty-val" id="qty-m1">0</span>
+            <button class="qty-btn" onclick="changeQty('m1','Dúo Marino',30,1)">+</button>
+          </div>
+        </div>
+
+        <div class="menu-item" id="row-m2">
+          <div class="mi-info">
+            <div class="mi-name">Trío Marino</div>
+            <div class="mi-desc">Arroz c/mariscos + Chicharrón de pescado + Ceviche carretillero + Inca Kola o Coca Cola 500ml</div>
+          </div>
+          <div class="mi-price">S/35</div>
+          <div class="mi-qty">
+            <button class="qty-btn" onclick="changeQty('m2','Trío Marino',35,-1)">−</button>
+            <span class="qty-val" id="qty-m2">0</span>
+            <button class="qty-btn" onclick="changeQty('m2','Trío Marino',35,1)">+</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PLATOS PERSONALES -->
+    <div class="menu-section reveal">
+      <div class="menu-section-title">Platos Personales</div>
+      <div class="menu-items">
+
+        <div class="menu-item" id="row-m3">
+          <div class="mi-info"><div class="mi-name">Ceviche de Tollo c/ Papa Rellena o Tortita de Choclo</div></div>
+          <div class="mi-price">S/12</div>
+          <div class="mi-qty">
+            <button class="qty-btn" onclick="changeQty('m3','Ceviche de Tollo',12,-1)">−</button>
+            <span class="qty-val" id="qty-m3">0</span>
+            <button class="qty-btn" onclick="changeQty('m3','Ceviche de Tollo',12,1)">+</button>
+          </div>
+        </div>
+
+        <div class="menu-item" id="row-m4">
+          <div class="mi-info"><div class="mi-name">Chicharrón de Pescado</div></div>
+          <div class="mi-price">S/15</div>
+          <div class="mi-qty">
+            <button class="qty-btn" onclick="changeQty('m4','Chicharrón de Pescado',15,-1)">−</button>
+            <span class="qty-val" id="qty-m4">0</span>
+            <button class="qty-btn" onclick="changeQty('m4','Chicharrón de Pescado',15,1)">+</button>
+          </div>
+        </div>
+
+        <div class="menu-item" id="row-m5">
+          <div class="mi-info"><div class="mi-name">Arroz con Mariscos</div></div>
+          <div class="mi-price">S/15</div>
+          <div class="mi-qty">
+            <button class="qty-btn" onclick="changeQty('m5','Arroz con Mariscos',15,-1)">−</button>
+            <span class="qty-val" id="qty-m5">0</span>
+            <button class="qty-btn" onclick="changeQty('m5','Arroz con Mariscos',15,1)">+</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PLATOS A LA CARTA -->
+    <div class="menu-section reveal">
+      <div class="menu-section-title">Platos a la Carta</div>
+      <div class="menu-items">
+        <div class="menu-item" id="row-mc1"><div class="mi-info"><div class="mi-name">Bisteck a lo Rico</div></div><div class="mi-price">S/28</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('mc1','Bisteck a lo Rico',28,-1)">−</button><span class="qty-val" id="qty-mc1">0</span><button class="qty-btn" onclick="changeQty('mc1','Bisteck a lo Rico',28,1)">+</button></div></div>
+        <div class="menu-item" id="row-mc2"><div class="mi-info"><div class="mi-name">Chuleta al Grill</div></div><div class="mi-price">S/20</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('mc2','Chuleta al Grill',20,-1)">−</button><span class="qty-val" id="qty-mc2">0</span><button class="qty-btn" onclick="changeQty('mc2','Chuleta al Grill',20,1)">+</button></div></div>
+        <div class="menu-item" id="row-mc3"><div class="mi-info"><div class="mi-name">Pollo al Grill</div></div><div class="mi-price">S/20</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('mc3','Pollo al Grill',20,-1)">−</button><span class="qty-val" id="qty-mc3">0</span><button class="qty-btn" onclick="changeQty('mc3','Pollo al Grill',20,1)">+</button></div></div>
+        <div class="menu-item" id="row-mc4"><div class="mi-info"><div class="mi-name">Lomito al Jugo</div></div><div class="mi-price">S/17</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('mc4','Lomito al Jugo',17,-1)">−</button><span class="qty-val" id="qty-mc4">0</span><button class="qty-btn" onclick="changeQty('mc4','Lomito al Jugo',17,1)">+</button></div></div>
+        <div class="menu-item" id="row-mc5"><div class="mi-info"><div class="mi-name">Chicharrón de Pollo</div></div><div class="mi-price">S/17</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('mc5','Chicharrón de Pollo',17,-1)">−</button><span class="qty-val" id="qty-mc5">0</span><button class="qty-btn" onclick="changeQty('mc5','Chicharrón de Pollo',17,1)">+</button></div></div>
+        <div class="menu-item" id="row-mc6"><div class="mi-info"><div class="mi-name">Mostrito</div></div><div class="mi-price">S/17</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('mc6','Mostrito',17,-1)">−</button><span class="qty-val" id="qty-mc6">0</span><button class="qty-btn" onclick="changeQty('mc6','Mostrito',17,1)">+</button></div></div>
+        <div class="menu-item" id="row-mc7"><div class="mi-info"><div class="mi-name">Milanesa</div></div><div class="mi-price">S/17</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('mc7','Milanesa',17,-1)">−</button><span class="qty-val" id="qty-mc7">0</span><button class="qty-btn" onclick="changeQty('mc7','Milanesa',17,1)">+</button></div></div>
+        <div class="menu-item" id="row-mc8"><div class="mi-info"><div class="mi-name">Chaufa</div></div><div class="mi-price">S/15</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('mc8','Chaufa',15,-1)">−</button><span class="qty-val" id="qty-mc8">0</span><button class="qty-btn" onclick="changeQty('mc8','Chaufa',15,1)">+</button></div></div>
+      </div>
+    </div>
+
+    <!-- GUARNICIONES -->
+    <div class="menu-section reveal">
+      <div class="menu-section-title">Guarniciones</div>
+      <div class="menu-items">
+        <div class="menu-item" id="row-g1"><div class="mi-info"><div class="mi-name">Yucas Fritas</div></div><div class="mi-price">S/5</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('g1','Yucas Fritas',5,-1)">−</button><span class="qty-val" id="qty-g1">0</span><button class="qty-btn" onclick="changeQty('g1','Yucas Fritas',5,1)">+</button></div></div>
+        <div class="menu-item" id="row-g2"><div class="mi-info"><div class="mi-name">P. Arroz Blanco</div></div><div class="mi-price">S/5</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('g2','P. Arroz Blanco',5,-1)">−</button><span class="qty-val" id="qty-g2">0</span><button class="qty-btn" onclick="changeQty('g2','P. Arroz Blanco',5,1)">+</button></div></div>
+        <div class="menu-item" id="row-g3"><div class="mi-info"><div class="mi-name">P. Arroz Chaufa</div></div><div class="mi-price">S/7</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('g3','P. Arroz Chaufa',7,-1)">−</button><span class="qty-val" id="qty-g3">0</span><button class="qty-btn" onclick="changeQty('g3','P. Arroz Chaufa',7,1)">+</button></div></div>
+        <div class="menu-item" id="row-g4"><div class="mi-info"><div class="mi-name">P. Choclo Frito</div></div><div class="mi-price">S/5</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('g4','P. Choclo Frito',5,-1)">−</button><span class="qty-val" id="qty-g4">0</span><button class="qty-btn" onclick="changeQty('g4','P. Choclo Frito',5,1)">+</button></div></div>
+        <div class="menu-item" id="row-g5"><div class="mi-info"><div class="mi-name">Papa Rellena</div></div><div class="mi-price">S/5</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('g5','Papa Rellena',5,-1)">−</button><span class="qty-val" id="qty-g5">0</span><button class="qty-btn" onclick="changeQty('g5','Papa Rellena',5,1)">+</button></div></div>
+        <div class="menu-item" id="row-g6"><div class="mi-info"><div class="mi-name">P. Pequeña de Papas Fritas</div></div><div class="mi-price">S/5</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('g6','P. Pequeña Papas Fritas',5,-1)">−</button><span class="qty-val" id="qty-g6">0</span><button class="qty-btn" onclick="changeQty('g6','P. Pequeña Papas Fritas',5,1)">+</button></div></div>
+        <div class="menu-item" id="row-g7"><div class="mi-info"><div class="mi-name">P. Mediana de Papas Fritas</div></div><div class="mi-price">S/10</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('g7','P. Mediana Papas Fritas',10,-1)">−</button><span class="qty-val" id="qty-g7">0</span><button class="qty-btn" onclick="changeQty('g7','P. Mediana Papas Fritas',10,1)">+</button></div></div>
+      </div>
+    </div>
+
+    <!-- BEBIDAS MAÑANA -->
+    <div class="menu-section reveal">
+      <div class="menu-section-title">Jugos y Bebidas</div>
+      <div class="menu-items">
+        <div class="menu-item" id="row-b1"><div class="mi-info"><div class="mi-name">Jugo Especial / Papaya / Piña / Fresa con leche</div></div><div class="mi-price">S/10</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('b1','Jugo',10,-1)">−</button><span class="qty-val" id="qty-b1">0</span><button class="qty-btn" onclick="changeQty('b1','Jugo',10,1)">+</button></div></div>
+        <div class="menu-item" id="row-b2"><div class="mi-info"><div class="mi-name">Jarra 1Lt Cebada</div></div><div class="mi-price">S/8</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('b2','Jarra Cebada 1Lt',8,-1)">−</button><span class="qty-val" id="qty-b2">0</span><button class="qty-btn" onclick="changeQty('b2','Jarra Cebada 1Lt',8,1)">+</button></div></div>
+        <div class="menu-item" id="row-b3"><div class="mi-info"><div class="mi-name">Jarra 1Lt Limonada Americana</div></div><div class="mi-price">S/12</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('b3','Jarra Limonada 1Lt',12,-1)">−</button><span class="qty-val" id="qty-b3">0</span><button class="qty-btn" onclick="changeQty('b3','Jarra Limonada 1Lt',12,1)">+</button></div></div>
+        <div class="menu-item" id="row-b4"><div class="mi-info"><div class="mi-name">Jarra 1Lt Chicha Morada</div></div><div class="mi-price">S/12</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('b4','Jarra Chicha Morada 1Lt',12,-1)">−</button><span class="qty-val" id="qty-b4">0</span><button class="qty-btn" onclick="changeQty('b4','Jarra Chicha Morada 1Lt',12,1)">+</button></div></div>
+        <div class="menu-item" id="row-b5"><div class="mi-info"><div class="mi-name">Jarra 1Lt Maracuyá</div></div><div class="mi-price">S/12</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('b5','Jarra Maracuyá 1Lt',12,-1)">−</button><span class="qty-val" id="qty-b5">0</span><button class="qty-btn" onclick="changeQty('b5','Jarra Maracuyá 1Lt',12,1)">+</button></div></div>
+        <div class="menu-item" id="row-b6"><div class="mi-info"><div class="mi-name">Frappe Mediano 12oz (Oreo/Fresa/Fudge/Café/Algarrobina)</div></div><div class="mi-price">S/12</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('b6','Frappe Mediano 12oz',12,-1)">−</button><span class="qty-val" id="qty-b6">0</span><button class="qty-btn" onclick="changeQty('b6','Frappe Mediano 12oz',12,1)">+</button></div></div>
+        <div class="menu-item" id="row-b7"><div class="mi-info"><div class="mi-name">Frappe Grande 16oz</div></div><div class="mi-price">S/15</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('b7','Frappe Grande 16oz',15,-1)">−</button><span class="qty-val" id="qty-b7">0</span><button class="qty-btn" onclick="changeQty('b7','Frappe Grande 16oz',15,1)">+</button></div></div>
+        <div class="menu-item" id="row-b8"><div class="mi-info"><div class="mi-name">Inca Kola / Coca Cola 500ml</div></div><div class="mi-price">S/4</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('b8','Inca Kola/Coca Cola 500ml',4,-1)">−</button><span class="qty-val" id="qty-b8">0</span><button class="qty-btn" onclick="changeQty('b8','Inca Kola/Coca Cola 500ml',4,1)">+</button></div></div>
+        <div class="menu-item" id="row-b9"><div class="mi-info"><div class="mi-name">Inca Kola Gordita</div></div><div class="mi-price">S/5</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('b9','Inca Kola Gordita',5,-1)">−</button><span class="qty-val" id="qty-b9">0</span><button class="qty-btn" onclick="changeQty('b9','Inca Kola Gordita',5,1)">+</button></div></div>
+        <div class="menu-item" id="row-b10"><div class="mi-info"><div class="mi-name">Cerveza Pilsen 630ml</div></div><div class="mi-price">S/10</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('b10','Cerveza Pilsen 630ml',10,-1)">−</button><span class="qty-val" id="qty-b10">0</span><button class="qty-btn" onclick="changeQty('b10','Cerveza Pilsen 630ml',10,1)">+</button></div></div>
+      </div>
+    </div>
+
+  </div><!-- end panel-manana -->
+
+  <!-- ═══════════════════════════════════════
+       PANEL: NOCHE
+  ═══════════════════════════════════════ -->
+  <div class="menu-panel" id="panel-noche">
+
+    <!-- ALITAS -->
+    <div class="menu-section reveal">
+      <div class="menu-section-title">Alitas — S/18 (6 pzas + papas fritas)</div>
+      <div class="menu-items">
+        <div class="menu-item" id="row-a1"><div class="mi-info"><div class="mi-name">Alitas Fritas</div><div class="mi-desc">6 pzas + papas fritas</div></div><div class="mi-price">S/18</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('a1','Alitas Fritas',18,-1)">−</button><span class="qty-val" id="qty-a1">0</span><button class="qty-btn" onclick="changeQty('a1','Alitas Fritas',18,1)">+</button></div></div>
+        <div class="menu-item" id="row-a2"><div class="mi-info"><div class="mi-name">Alitas BBQ</div></div><div class="mi-price">S/18</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('a2','Alitas BBQ',18,-1)">−</button><span class="qty-val" id="qty-a2">0</span><button class="qty-btn" onclick="changeQty('a2','Alitas BBQ',18,1)">+</button></div></div>
+        <div class="menu-item" id="row-a3"><div class="mi-info"><div class="mi-name">Alitas Búfalo</div></div><div class="mi-price">S/18</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('a3','Alitas Búfalo',18,-1)">−</button><span class="qty-val" id="qty-a3">0</span><button class="qty-btn" onclick="changeQty('a3','Alitas Búfalo',18,1)">+</button></div></div>
+        <div class="menu-item" id="row-a4"><div class="mi-info"><div class="mi-name">Alitas Mango</div></div><div class="mi-price">S/18</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('a4','Alitas Mango',18,-1)">−</button><span class="qty-val" id="qty-a4">0</span><button class="qty-btn" onclick="changeQty('a4','Alitas Mango',18,1)">+</button></div></div>
+        <div class="menu-item" id="row-a5"><div class="mi-info"><div class="mi-name">Alitas Maracuyá</div></div><div class="mi-price">S/18</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('a5','Alitas Maracuyá',18,-1)">−</button><span class="qty-val" id="qty-a5">0</span><button class="qty-btn" onclick="changeQty('a5','Alitas Maracuyá',18,1)">+</button></div></div>
+        <div class="menu-item" id="row-a6"><div class="mi-info"><div class="mi-name">Alitas Broaster</div><div class="mi-desc">5 pzas + arroz blanco</div></div><div class="mi-price">S/18</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('a6','Alitas Broaster',18,-1)">−</button><span class="qty-val" id="qty-a6">0</span><button class="qty-btn" onclick="changeQty('a6','Alitas Broaster',18,1)">+</button></div></div>
+        <div class="menu-item" id="row-a7"><div class="mi-info"><div class="mi-name">Alitas Acevichadas</div><div class="mi-desc">5 pzas</div></div><div class="mi-price">S/18</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('a7','Alitas Acevichadas',18,-1)">−</button><span class="qty-val" id="qty-a7">0</span><button class="qty-btn" onclick="changeQty('a7','Alitas Acevichadas',18,1)">+</button></div></div>
+        <div class="menu-item" id="row-a8"><div class="mi-info"><div class="mi-name">Alitas Crispy</div><div class="mi-desc">5 pzas</div></div><div class="mi-price">S/18</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('a8','Alitas Crispy',18,-1)">−</button><span class="qty-val" id="qty-a8">0</span><button class="qty-btn" onclick="changeQty('a8','Alitas Crispy',18,1)">+</button></div></div>
+        <div class="menu-item" id="row-a9"><div class="mi-info"><div class="mi-name">Alitas Tamarindo</div></div><div class="mi-price">S/18</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('a9','Alitas Tamarindo',18,-1)">−</button><span class="qty-val" id="qty-a9">0</span><button class="qty-btn" onclick="changeQty('a9','Alitas Tamarindo',18,1)">+</button></div></div>
+        <div class="menu-item" id="row-a10"><div class="mi-info"><div class="mi-name">Alitas Maracumango</div></div><div class="mi-price">S/18</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('a10','Alitas Maracumango',18,-1)">−</button><span class="qty-val" id="qty-a10">0</span><button class="qty-btn" onclick="changeQty('a10','Alitas Maracumango',18,1)">+</button></div></div>
+      </div>
+    </div>
+
+    <!-- PROMOCIONES -->
+    <div class="menu-section reveal">
+      <div class="menu-section-title">Promociones Noche</div>
+      <div class="menu-items">
+        <div class="menu-item" id="row-p1"><div class="mi-info"><div class="mi-name">Festín Sipán</div><div class="mi-desc">15 alitas crispy + 3 sabores + 12 nuggets + Inca Kola 1Lt + 400gr papas fritas</div></div><div class="mi-price">S/70</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('p1','Festín Sipán',70,-1)">−</button><span class="qty-val" id="qty-p1">0</span><button class="qty-btn" onclick="changeQty('p1','Festín Sipán',70,1)">+</button></div></div>
+        <div class="menu-item" id="row-p2"><div class="mi-info"><div class="mi-name">Ronda Alitas</div><div class="mi-desc">20 alitas (hasta 4 sabores) + papas fritas + 6 tequeños</div></div><div class="mi-price">S/60</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('p2','Ronda Alitas',60,-1)">−</button><span class="qty-val" id="qty-p2">0</span><button class="qty-btn" onclick="changeQty('p2','Ronda Alitas',60,1)">+</button></div></div>
+        <div class="menu-item" id="row-p3"><div class="mi-info"><div class="mi-name">Trío Mixto</div><div class="mi-desc">15 alitas (3 sabores) + papas fritas</div></div><div class="mi-price">S/45</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('p3','Trío Mixto',45,-1)">−</button><span class="qty-val" id="qty-p3">0</span><button class="qty-btn" onclick="changeQty('p3','Trío Mixto',45,1)">+</button></div></div>
+        <div class="menu-item" id="row-p4"><div class="mi-info"><div class="mi-name">Trío BBQ</div><div class="mi-desc">15 alitas BBQ + papas fritas</div></div><div class="mi-price">S/38</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('p4','Trío BBQ',38,-1)">−</button><span class="qty-val" id="qty-p4">0</span><button class="qty-btn" onclick="changeQty('p4','Trío BBQ',38,1)">+</button></div></div>
+        <div class="menu-item" id="row-p5"><div class="mi-info"><div class="mi-name">Super Promo</div><div class="mi-desc">12 alitas (2 sabores) + ½L chicha morada + papas fritas + arroz</div></div><div class="mi-price">S/35</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('p5','Super Promo',35,-1)">−</button><span class="qty-val" id="qty-p5">0</span><button class="qty-btn" onclick="changeQty('p5','Super Promo',35,1)">+</button></div></div>
+        <div class="menu-item" id="row-p6"><div class="mi-info"><div class="mi-name">Bisteck a lo Rico (Promo)</div><div class="mi-desc">Bisteck + 2 chorizos + papas + arroz + huevo + plátanos fritos + ensalada + gaseosa</div></div><div class="mi-price">S/30</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('p6','Bisteck a lo Rico Promo',30,-1)">−</button><span class="qty-val" id="qty-p6">0</span><button class="qty-btn" onclick="changeQty('p6','Bisteck a lo Rico Promo',30,1)">+</button></div></div>
+        <div class="menu-item" id="row-p7"><div class="mi-info"><div class="mi-name">Super Mostrito</div><div class="mi-desc">5 alitas BBQ + arroz chaufa + wantan frito + papas + hot dog ahumado</div></div><div class="mi-price">S/25</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('p7','Super Mostrito',25,-1)">−</button><span class="qty-val" id="qty-p7">0</span><button class="qty-btn" onclick="changeQty('p7','Super Mostrito',25,1)">+</button></div></div>
+      </div>
+    </div>
+
+    <!-- PLATOS NOCHE -->
+    <div class="menu-section reveal">
+      <div class="menu-section-title">Platos a la Carta — Noche</div>
+      <div class="menu-items">
+        <div class="menu-item" id="row-n1"><div class="mi-info"><div class="mi-name">Chaufa de Pollo</div></div><div class="mi-price">S/15</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n1','Chaufa de Pollo',15,-1)">−</button><span class="qty-val" id="qty-n1">0</span><button class="qty-btn" onclick="changeQty('n1','Chaufa de Pollo',15,1)">+</button></div></div>
+        <div class="menu-item" id="row-n2"><div class="mi-info"><div class="mi-name">Chaufa de Carne</div></div><div class="mi-price">S/15</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n2','Chaufa de Carne',15,-1)">−</button><span class="qty-val" id="qty-n2">0</span><button class="qty-btn" onclick="changeQty('n2','Chaufa de Carne',15,1)">+</button></div></div>
+        <div class="menu-item" id="row-n3"><div class="mi-info"><div class="mi-name">Mostrito</div><div class="mi-desc">Arroz chaufa + milanesa + papas fritas</div></div><div class="mi-price">S/17</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n3','Mostrito',17,-1)">−</button><span class="qty-val" id="qty-n3">0</span><button class="qty-btn" onclick="changeQty('n3','Mostrito',17,1)">+</button></div></div>
+        <div class="menu-item" id="row-n4"><div class="mi-info"><div class="mi-name">Lomito al Jugo</div></div><div class="mi-price">S/17</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n4','Lomito al Jugo',17,-1)">−</button><span class="qty-val" id="qty-n4">0</span><button class="qty-btn" onclick="changeQty('n4','Lomito al Jugo',17,1)">+</button></div></div>
+        <div class="menu-item" id="row-n5"><div class="mi-info"><div class="mi-name">Chicharrón de Pollo</div></div><div class="mi-price">S/17</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n5','Chicharrón de Pollo Noche',17,-1)">−</button><span class="qty-val" id="qty-n5">0</span><button class="qty-btn" onclick="changeQty('n5','Chicharrón de Pollo Noche',17,1)">+</button></div></div>
+        <div class="menu-item" id="row-n6"><div class="mi-info"><div class="mi-name">Milanesa</div></div><div class="mi-price">S/17</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n6','Milanesa Noche',17,-1)">−</button><span class="qty-val" id="qty-n6">0</span><button class="qty-btn" onclick="changeQty('n6','Milanesa Noche',17,1)">+</button></div></div>
+        <div class="menu-item" id="row-n7"><div class="mi-info"><div class="mi-name">Salchipapa</div><div class="mi-desc">Papas fritas + hot dog + milanesa + huevo frito</div></div><div class="mi-price">S/17</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n7','Salchipapa',17,-1)">−</button><span class="qty-val" id="qty-n7">0</span><button class="qty-btn" onclick="changeQty('n7','Salchipapa',17,1)">+</button></div></div>
+        <div class="menu-item" id="row-n8"><div class="mi-info"><div class="mi-name">Pollo al Grill</div></div><div class="mi-price">S/20</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n8','Pollo al Grill',20,-1)">−</button><span class="qty-val" id="qty-n8">0</span><button class="qty-btn" onclick="changeQty('n8','Pollo al Grill',20,1)">+</button></div></div>
+        <div class="menu-item" id="row-n9"><div class="mi-info"><div class="mi-name">Chuleta al Grill</div></div><div class="mi-price">S/20</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n9','Chuleta al Grill',20,-1)">−</button><span class="qty-val" id="qty-n9">0</span><button class="qty-btn" onclick="changeQty('n9','Chuleta al Grill',20,1)">+</button></div></div>
+        <div class="menu-item" id="row-n10"><div class="mi-info"><div class="mi-name">Caldo de Gallina</div></div><div class="mi-price">S/20</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n10','Caldo de Gallina',20,-1)">−</button><span class="qty-val" id="qty-n10">0</span><button class="qty-btn" onclick="changeQty('n10','Caldo de Gallina',20,1)">+</button></div></div>
+        <div class="menu-item" id="row-n11"><div class="mi-info"><div class="mi-name">Bisteck a lo Rico</div></div><div class="mi-price">S/28</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('n11','Bisteck a lo Rico',28,-1)">−</button><span class="qty-val" id="qty-n11">0</span><button class="qty-btn" onclick="changeQty('n11','Bisteck a lo Rico',28,1)">+</button></div></div>
+      </div>
+    </div>
+
+    <!-- BEBIDAS NOCHE -->
+    <div class="menu-section reveal">
+      <div class="menu-section-title">Bebidas — Noche</div>
+      <div class="menu-items">
+        <div class="menu-item" id="row-bn1"><div class="mi-info"><div class="mi-name">Jugo (Especial/Papaya/Piña/Mango/Maracumango)</div></div><div class="mi-price">S/10</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn1','Jugo',10,-1)">−</button><span class="qty-val" id="qty-bn1">0</span><button class="qty-btn" onclick="changeQty('bn1','Jugo',10,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn2"><div class="mi-info"><div class="mi-name">Refrescante 1Lt (Limonada/Chicha Morada/Maracuyá/Piña)</div></div><div class="mi-price">S/12</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn2','Refrescante 1Lt',12,-1)">−</button><span class="qty-val" id="qty-bn2">0</span><button class="qty-btn" onclick="changeQty('bn2','Refrescante 1Lt',12,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn3"><div class="mi-info"><div class="mi-name">Frozen Copa (Limonada/Maracuyá/Fresa/Piña)</div></div><div class="mi-price">S/10</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn3','Frozen Copa',10,-1)">−</button><span class="qty-val" id="qty-bn3">0</span><button class="qty-btn" onclick="changeQty('bn3','Frozen Copa',10,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn4"><div class="mi-info"><div class="mi-name">Frozen 1 Litro</div></div><div class="mi-price">S/15</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn4','Frozen 1Lt',15,-1)">−</button><span class="qty-val" id="qty-bn4">0</span><button class="qty-btn" onclick="changeQty('bn4','Frozen 1Lt',15,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn5"><div class="mi-info"><div class="mi-name">Frappe Mediano 12oz</div></div><div class="mi-price">S/12</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn5','Frappe Mediano 12oz',12,-1)">−</button><span class="qty-val" id="qty-bn5">0</span><button class="qty-btn" onclick="changeQty('bn5','Frappe Mediano 12oz',12,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn6"><div class="mi-info"><div class="mi-name">Frappe Grande 16oz</div></div><div class="mi-price">S/15</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn6','Frappe Grande 16oz',15,-1)">−</button><span class="qty-val" id="qty-bn6">0</span><button class="qty-btn" onclick="changeQty('bn6','Frappe Grande 16oz',15,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn7"><div class="mi-info"><div class="mi-name">Milkshake Mediano 12oz</div></div><div class="mi-price">S/14</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn7','Milkshake Mediano 12oz',14,-1)">−</button><span class="qty-val" id="qty-bn7">0</span><button class="qty-btn" onclick="changeQty('bn7','Milkshake Mediano 12oz',14,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn8"><div class="mi-info"><div class="mi-name">Milkshake Grande 16oz</div></div><div class="mi-price">S/17</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn8','Milkshake Grande 16oz',17,-1)">−</button><span class="qty-val" id="qty-bn8">0</span><button class="qty-btn" onclick="changeQty('bn8','Milkshake Grande 16oz',17,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn9"><div class="mi-info"><div class="mi-name">Inca Kola / Coca Cola 500ml</div></div><div class="mi-price">S/4</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn9','Gaseosa 500ml',4,-1)">−</button><span class="qty-val" id="qty-bn9">0</span><button class="qty-btn" onclick="changeQty('bn9','Gaseosa 500ml',4,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn10"><div class="mi-info"><div class="mi-name">Inca Kola / Coca Cola 1Lt</div></div><div class="mi-price">S/8</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn10','Gaseosa 1Lt',8,-1)">−</button><span class="qty-val" id="qty-bn10">0</span><button class="qty-btn" onclick="changeQty('bn10','Gaseosa 1Lt',8,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn11"><div class="mi-info"><div class="mi-name">Cerveza Pilsen 630ml</div></div><div class="mi-price">S/10</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn11','Cerveza Pilsen',10,-1)">−</button><span class="qty-val" id="qty-bn11">0</span><button class="qty-btn" onclick="changeQty('bn11','Cerveza Pilsen',10,1)">+</button></div></div>
+        <div class="menu-item" id="row-bn12"><div class="mi-info"><div class="mi-name">Cerveza Cuzqueña</div></div><div class="mi-price">S/11</div><div class="mi-qty"><button class="qty-btn" onclick="changeQty('bn12','Cerveza Cuzqueña',11,-1)">−</button><span class="qty-val" id="qty-bn12">0</span><button class="qty-btn" onclick="changeQty('bn12','Cerveza Cuzqueña',11,1)">+</button></div></div>
+      </div>
+    </div>
+
+  </div><!-- end panel-noche -->
+
+  <footer>© 2025 Marino Restaurante · Chiclayo · 📞 990 854 675</footer>
+
+  <!-- ORDER TOGGLE BUTTON -->
+  <button class="order-toggle" id="order-toggle" onclick="toggleOrderPanel()" style="display:none;">
+    🛒 Mi Pedido <span class="order-badge" id="order-badge">0</span>
+  </button>
+
+  <!-- ORDER PANEL -->
+  <div class="order-panel" id="order-panel">
+    <div class="order-inner">
+      <div class="order-title">
+        Mi Pedido
+        <button class="order-close" onclick="closeOrderPanel()">✕</button>
+      </div>
+
+      <div class="order-list" id="order-list">
+        <div class="order-empty">Aún no has seleccionado nada.</div>
+      </div>
+
+      <div class="order-total-row">
+        <span class="order-total-label">Total</span>
+        <span class="order-total-val" id="order-total">S/0.00</span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Tu nombre</label>
+          <input type="text" class="form-input" id="inp-name" placeholder="Ej: Juan Pérez">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dirección de entrega</label>
+          <input type="text" class="form-input" id="inp-address" placeholder="Calle, Urb., referencia">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label class="form-label">Notas adicionales (opcional)</label>
+        <textarea class="form-input" id="inp-notes" placeholder="Sin cebolla, sin picante, etc."></textarea>
+      </div>
+
+      <button class="wa-btn" id="wa-btn" onclick="sendWhatsApp()" disabled>
+        💬 Enviar pedido por WhatsApp
+      </button>
+    </div>
+  </div>
+
+  <script src="script-rest.js"></script>
+</body>
+</html>

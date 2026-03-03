@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MARINO | Corporación</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Space+Mono&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- CURSOR PERSONALIZADO -->
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <!-- PARTÍCULAS DE FONDO -->
+  <canvas id="particles"></canvas>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo">
+      <span class="logo-text">MARINO</span>
+      <span class="logo-dot"></span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#inicio">Inicio</a></li>
+      <li><a href="#nosotros">Nosotros</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#pedido">Pedir Ahora</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('pedido').scrollIntoView({behavior:'smooth'})">
+      <span>PEDIR AHORA</span>
+      <div class="btn-glow"></div>
+    </button>
+    <button class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="#inicio" onclick="closeMobile()">Inicio</a></li>
+      <li><a href="#nosotros" onclick="closeMobile()">Nosotros</a></li>
+      <li><a href="#servicios" onclick="closeMobile()">Servicios</a></li>
+      <li><a href="#pedido" onclick="closeMobile()">Pedir Ahora</a></li>
+    </ul>
+  </div>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="inicio">
+    <div class="hero-grid-lines"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>CORPORACIÓN MARINO · CHICLAYO</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="title-line" data-text="MAR">MAR</span><span class="title-accent">I</span><span class="title-line" data-text="NO">NO</span>
+      </h1>
+      <p class="hero-subtitle">El ecosistema de servicios diseñado para el hombre moderno</p>
+      <div class="hero-services-preview">
+        <div class="preview-chip" onclick="document.getElementById('restaurante-section').scrollIntoView({behavior:'smooth'})">
+          <span class="chip-icon">🍽️</span>
+          <span>Restaurante</span>
+        </div>
+        <div class="preview-chip" onclick="document.getElementById('barber-section').scrollIntoView({behavior:'smooth'})">
+          <span class="chip-icon">💈</span>
+          <span>Barber</span>
+        </div>
+        <div class="preview-chip" onclick="document.getElementById('lavanderia-section').scrollIntoView({behavior:'smooth'})">
+          <span class="chip-icon">👕</span>
+          <span>Lavandería</span>
+        </div>
+      </div>
+      <div class="hero-cta-group">
+        <button class="btn-primary" onclick="document.getElementById('pedido').scrollIntoView({behavior:'smooth'})">
+          <span>HACER PEDIDO</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <div class="btn-glow"></div>
+        </button>
+        <button class="btn-secondary" onclick="document.getElementById('nosotros').scrollIntoView({behavior:'smooth'})">
+          <span>CONOCER MÁS</span>
+        </button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-ring ring-1"></div>
+      <div class="hero-ring ring-2"></div>
+      <div class="hero-ring ring-3"></div>
+      <div class="hero-image-placeholder">
+        <div class="placeholder-inner">
+          <div class="placeholder-icon">👤</div>
+          <p>Foto del fundador</p>
+        </div>
+      </div>
+      <div class="floating-stat stat-1">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Negocios</span>
+      </div>
+      <div class="floating-stat stat-2">
+        <span class="stat-num">+2K</span>
+        <span class="stat-label">Clientes</span>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>SCROLL</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- NOSOTROS SECTION -->
+  <section class="nosotros" id="nosotros">
+    <div class="section-label">
+      <span class="label-line"></span>
+      <span>¿POR QUÉ MARINO?</span>
+      <span class="label-line"></span>
+    </div>
+    <div class="nosotros-content">
+      <div class="nosotros-text">
+        <h2 class="section-title">Una <span class="highlight">visión</span>, tres mundos</h2>
+        <p class="nosotros-desc">
+          Marino nació de la convicción de que los jóvenes de Chiclayo merecen servicios de alto nivel: 
+          comida de calidad, estilo sin compromiso y comodidad total. Un solo nombre, tres experiencias únicas.
+        </p>
+        <div class="nosotros-stats">
+          <div class="nstat">
+            <span class="nstat-num">2,294</span>
+            <span class="nstat-label">Seguidores Rest.</span>
+          </div>
+          <div class="nstat">
+            <span class="nstat-num">763</span>
+            <span class="nstat-label">Seguidores Barber</span>
+          </div>
+          <div class="nstat">
+            <span class="nstat-num">100%</span>
+            <span class="nstat-label">Satisfacción</span>
+          </div>
+        </div>
+      </div>
+      <div class="nosotros-image">
+        <div class="img-frame">
+          <div class="img-placeholder">
+            <span>👤</span>
+            <p>Foto del joven fundador</p>
+            <small>Imagen próximamente</small>
+          </div>
+          <div class="frame-corner fc-tl"></div>
+          <div class="frame-corner fc-tr"></div>
+          <div class="frame-corner fc-bl"></div>
+          <div class="frame-corner fc-br"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS SECTION -->
+  <section class="servicios" id="servicios">
+    <div class="section-label">
+      <span class="label-line"></span>
+      <span>NUESTROS SERVICIOS</span>
+      <span class="label-line"></span>
+    </div>
+    <h2 class="section-title center">Elige tu <span class="highlight">experiencia</span></h2>
+
+    <!-- RESTAURANTE -->
+    <div class="service-block" id="restaurante-section">
+      <div class="service-header rest-header">
+        <div class="service-logo-area">
+          <div class="service-icon-big">🍽️</div>
+          <div>
+            <h3 class="service-name">MARINO</h3>
+            <span class="service-sub">RESTAURANTE</span>
+          </div>
+        </div>
+        <div class="service-info">
+          <span>📍 Urb. Los Sauces Calle 11 Mz K Lote 4</span>
+          <span>📞 990 854 675</span>
+          <span>🛵 Delivery gratis: Sauces, Garita y Ensenada</span>
+        </div>
+      </div>
+
+      <div class="menu-tabs">
+        <button class="tab-btn active" onclick="switchTab('manana')">☀️ Mañana</button>
+        <button class="tab-btn" onclick="switchTab('noche')">🌙 Noche</button>
+        <button class="tab-btn" onclick="switchTab('bebidas')">🥤 Bebidas</button>
+      </div>
+
+      <!-- MENU MAÑANA -->
+      <div class="menu-panel active" id="tab-manana">
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">COMBOS MARINOS</h4>
+          <div class="menu-grid">
+            <div class="menu-item">
+              <div class="item-info">
+                <span class="item-name">Dúo Marino</span>
+                <span class="item-desc">Ceviche carretillero + Chicharrón de pescado o Arroz con mariscos + Inca Kola 500ml</span>
+              </div>
+              <span class="item-price rest-price">S/30</span>
+            </div>
+            <div class="menu-item">
+              <div class="item-info">
+                <span class="item-name">Trío Marino</span>
+                <span class="item-desc">Arroz con mariscos + Chicharrón de pescado + Ceviche carretillero + Inca Kola 500ml</span>
+              </div>
+              <span class="item-price rest-price">S/35</span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">PLATOS PERSONALES</h4>
+          <div class="menu-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Ceviche de Tollo c/ Papa Rellena o Tortita de Choclo</span></div><span class="item-price rest-price">S/12</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Chicharrón de Pescado</span></div><span class="item-price rest-price">S/15</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Arroz con Mariscos</span></div><span class="item-price rest-price">S/15</span></div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">PLATOS A LA CARTA</h4>
+          <div class="menu-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Bisteck a lo Rico</span></div><span class="item-price rest-price">S/28</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Chuleta al Grill</span></div><span class="item-price rest-price">S/20</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Pollo al Grill</span></div><span class="item-price rest-price">S/20</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Lomito al Jugo</span></div><span class="item-price rest-price">S/17</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Chicharrón de Pollo</span></div><span class="item-price rest-price">S/17</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Mostrito</span></div><span class="item-price rest-price">S/17</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Milanesa</span></div><span class="item-price rest-price">S/17</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Chaufa</span></div><span class="item-price rest-price">S/15</span></div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">GUARNICIONES</h4>
+          <div class="menu-grid small-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Yucas Fritas</span></div><span class="item-price rest-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">P. Arroz Blanco</span></div><span class="item-price rest-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">P. Arroz Chaufa</span></div><span class="item-price rest-price">S/7</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">P. Choclo Frito</span></div><span class="item-price rest-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Papa Rellena</span></div><span class="item-price rest-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Tortita de Choclo</span></div><span class="item-price rest-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">P. Pequeña Papas Fritas</span></div><span class="item-price rest-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">P. Mediana Papas Fritas</span></div><span class="item-price rest-price">S/10</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MENU NOCHE -->
+      <div class="menu-panel" id="tab-noche">
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">ALITAS <span class="highlight">S/18</span> — Todas incluyen papas fritas</h4>
+          <div class="menu-grid small-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Alitas Fritas</span><span class="item-desc">06 pz.</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Alitas BBQ</span><span class="item-desc">06 pz.</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Alitas Búfalo</span><span class="item-desc">06 pz.</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Alitas Mango</span><span class="item-desc">06 pz.</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Alitas Maracuyá</span><span class="item-desc">06 pz.</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Alitas Broaster</span><span class="item-desc">05 pz. + arroz blanco</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Alitas Acevichadas</span><span class="item-desc">05 pz.</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Alitas Crispy</span><span class="item-desc">05 pz.</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Alitas Tamarindo</span><span class="item-desc">06 pz.</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Alitas Maracumango</span><span class="item-desc">06 pz.</span></div></div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">PROMOCIONES NOCHE</h4>
+          <div class="menu-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Festín Sipán</span><span class="item-desc">15 alitas crispy + 3 sabores + 12 nuggets + Coca Cola 1L + 400g papas fritas</span></div><span class="item-price rest-price">S/70</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Ronda Alitas</span><span class="item-desc">20 alitas hasta 4 sabores + papas fritas + 6 tequeños</span></div><span class="item-price rest-price">S/60</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Trío Mixto</span><span class="item-desc">15 alitas 3 sabores + papas fritas</span></div><span class="item-price rest-price">S/45</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Trío BBQ</span><span class="item-desc">15 alitas BBQ + papas fritas</span></div><span class="item-price rest-price">S/38</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Super Promo</span><span class="item-desc">12 alitas 2 sabores + chicha morada + papas + arroz + ensalada</span></div><span class="item-price rest-price">S/35</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Bisteck a lo Rico</span><span class="item-desc">Bisteck + 2 chorizos + papas + arroz + huevo + plátanos + ensalada + gaseosa</span></div><span class="item-price rest-price">S/30</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Super Mostrito</span><span class="item-desc">5 alitas BBQ + arroz chaufa + wantán frito + papas + hot dog ahumado</span></div><span class="item-price rest-price">S/25</span></div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">PLATOS A LA CARTA (NOCHE)</h4>
+          <div class="menu-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Chaufa de Pollo</span></div><span class="item-price rest-price">S/15</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Chaufa de Carne</span></div><span class="item-price rest-price">S/15</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Mostrito</span><span class="item-desc">Arroz chaufa + milanesa + papas fritas</span></div><span class="item-price rest-price">S/17</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Lomito al Jugo</span></div><span class="item-price rest-price">S/17</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Chicharrón de Pollo</span></div><span class="item-price rest-price">S/17</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Milanesa</span></div><span class="item-price rest-price">S/17</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Salchipapa</span><span class="item-desc">Papas fritas + rodajas de hot dog + milanesa</span></div><span class="item-price rest-price">S/17</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Pollo al Grill</span></div><span class="item-price rest-price">S/20</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Chuleta al Grill</span></div><span class="item-price rest-price">S/20</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Caldo de Gallina</span></div><span class="item-price rest-price">S/20</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Bisteck a lo Rico</span></div><span class="item-price rest-price">S/28</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BEBIDAS -->
+      <div class="menu-panel" id="tab-bebidas">
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">JUGOS — S/10</h4>
+          <div class="menu-grid small-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Jugo Especial</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Jugo de Papaya</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Jugo de Piña</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Jugo de Fresa con Leche</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Jugo de Mango</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Jugo de Maracumango Tropical</span></div></div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">REFRESCANTES (1 LITRO) — S/12</h4>
+          <div class="menu-grid small-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Limonada Americana</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Chicha Morada</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Maracuyá</span></div></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Piña</span></div></div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">FRAPPES / MILKSHAKES</h4>
+          <div class="menu-grid small-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Frappe Mediano (12oz)</span><span class="item-desc">Oreo, Fresa, Fudge, Café, Algarrobina</span></div><span class="item-price rest-price">S/12</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Frappe Grande (16oz)</span></div><span class="item-price rest-price">S/15</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Milkshake Mediano</span><span class="item-desc">Fresa, Oreo, Manjar, Fudge, Café, Coco</span></div><span class="item-price rest-price">S/14</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Milkshake Grande</span></div><span class="item-price rest-price">S/17</span></div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">GASEOSAS & CERVEZA</h4>
+          <div class="menu-grid small-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Inca Kola / Coca Cola 500ml</span></div><span class="item-price rest-price">S/4</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Inca Kola Gordita</span></div><span class="item-price rest-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Inca Kola / Coca Cola 1lt</span></div><span class="item-price rest-price">S/8</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Inca Kola / Coca Cola 1.5lt</span></div><span class="item-price rest-price">S/12</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Pilsen 630ml</span></div><span class="item-price rest-price">S/10</span></div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h4 class="cat-title rest-cat">FROZEN</h4>
+          <div class="menu-grid small-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Copa (Limonada, Maracuyá, Fresa, Piña)</span></div><span class="item-price rest-price">S/10</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">1 Litro Frozen</span></div><span class="item-price rest-price">S/15</span></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="order-btn rest-btn" onclick="openOrder('restaurante')">
+        <span>🛵 PEDIR AL RESTAURANTE</span>
+        <div class="btn-glow"></div>
+      </button>
+    </div>
+
+    <!-- BARBER -->
+    <div class="service-block" id="barber-section">
+      <div class="service-header barber-header">
+        <div class="service-logo-area">
+          <div class="service-icon-big">💈</div>
+          <div>
+            <h3 class="service-name barber-name">MARINO</h3>
+            <span class="service-sub barber-sub">BARBER</span>
+          </div>
+        </div>
+        <div class="service-info">
+          <span>📍 Urb. Los Sauces Mz M1 Lote 23 (2da Etapa)</span>
+          <span>📍 La Pradera, Av. Principal Mz D Lote 1</span>
+          <span>📞 970 736 968</span>
+        </div>
+      </div>
+
+      <div class="menu-tabs">
+        <button class="tab-btn barber-tab active" onclick="switchBarberTab('promos')">🎯 Promociones</button>
+        <button class="tab-btn barber-tab" onclick="switchBarberTab('servicios-barber')">✂️ Servicios</button>
+        <button class="tab-btn barber-tab" onclick="switchBarberTab('bebidas-barber')">🍺 Bebidas</button>
+      </div>
+
+      <div class="menu-panel active" id="btab-promos">
+        <div class="promo-cards">
+          <div class="promo-card vip-card">
+            <div class="promo-badge">VIP</div>
+            <h4>Marino VIP</h4>
+            <ul>
+              <li>Todo lo del Premium</li>
+              <li>5 min de masajes</li>
+              <li>Tratamiento facial completo</li>
+              <li>Cerveza de cortesía</li>
+              <li>Barba o Pigmentación</li>
+            </ul>
+            <span class="promo-price">S/60</span>
+          </div>
+          <div class="promo-card premium-card">
+            <div class="promo-badge">PREMIUM</div>
+            <h4>Premium</h4>
+            <ul>
+              <li>Corte</li>
+              <li>Diseño de cejas</li>
+              <li>Mascarilla facial básica</li>
+              <li>Styling (peinado con producto)</li>
+              <li>Lavado de cabello</li>
+              <li>Cortesía</li>
+            </ul>
+            <span class="promo-price">S/35</span>
+          </div>
+          <div class="promo-card estandar-card">
+            <div class="promo-badge">ESTÁNDAR</div>
+            <h4>Estándar</h4>
+            <ul>
+              <li>Corte</li>
+              <li>Diseño de cejas</li>
+              <li>Lavado de cabello</li>
+              <li>Cortesía</li>
+            </ul>
+            <span class="promo-price">S/30</span>
+          </div>
+          <div class="promo-card basico-card">
+            <div class="promo-badge">BÁSICO</div>
+            <h4>Básico</h4>
+            <ul>
+              <li>Corte clásico o degradado</li>
+            </ul>
+            <span class="promo-price">S/25</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-panel" id="btab-servicios-barber">
+        <div class="menu-category">
+          <h4 class="cat-title barber-cat">SERVICIOS INDIVIDUALES</h4>
+          <div class="menu-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Corte</span></div><span class="item-price barber-price">S/25</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Barba</span></div><span class="item-price barber-price">S/10</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Diseño de Cejas</span></div><span class="item-price barber-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Mascarilla Facial Básica</span></div><span class="item-price barber-price">S/10</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Mascarilla Facial Premium</span></div><span class="item-price barber-price">S/25</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Masaje Relajante (10 min)</span></div><span class="item-price barber-price">S/10</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Lavado de Cabello</span></div><span class="item-price barber-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Tratamiento Capilar con Ampolla</span></div><span class="item-price barber-price">S/15</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Styling (peinado con producto)</span></div><span class="item-price barber-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Diseño Lineal</span></div><span class="item-price barber-price">S/5</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Diseño Libre</span></div><span class="item-price barber-price">S/10-20</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Ondulación o Semiondulación</span><span class="item-desc">Incluye: corte, perfilado de cejas, lavado, cortesía</span></div><span class="item-price barber-price">S/80</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-panel" id="btab-bebidas-barber">
+        <div class="menu-category">
+          <h4 class="cat-title barber-cat">BEBIDAS EN BARBER</h4>
+          <div class="menu-grid small-grid">
+            <div class="menu-item"><div class="item-info"><span class="item-name">Cerveza (Pilsen, Heineken, Tres Cruces)</span></div><span class="item-price barber-price">S/6</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Inca Kola o Coca Cola 192ml</span></div><span class="item-price barber-price">S/2.50</span></div>
+            <div class="menu-item"><div class="item-info"><span class="item-name">Agua, Pepsi, Guaranita</span></div><span class="item-price barber-price">S/2</span></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="order-btn barber-btn" onclick="openOrder('barber')">
+        <span>💈 RESERVAR CITA EN BARBER</span>
+        <div class="btn-glow"></div>
+      </button>
+    </div>
+
+    <!-- LAVANDERIA -->
+    <div class="service-block" id="lavanderia-section">
+      <div class="service-header lav-header">
+        <div class="service-logo-area">
+          <div class="service-icon-big">👕</div>
+          <div>
+            <h3 class="service-name lav-name">MARINO</h3>
+            <span class="service-sub lav-sub">LAVANDERÍA</span>
+          </div>
+        </div>
+        <div class="service-info">
+          <span>💙 Tenemos un solo objetivo: hacer el trabajo por ti</span>
+          <span>🚚 Recogemos y entregamos GRATIS</span>
+          <span>📱 Cotiza por WhatsApp</span>
+        </div>
+      </div>
+
+      <div class="lav-features">
+        <div class="lav-feature">
+          <span class="lav-icon">🚚</span>
+          <h4>Recojo y Entrega Gratis</h4>
+          <p>Vamos a tu casa, recogemos tu ropa y te la devolvemos limpia sin costo adicional</p>
+        </div>
+        <div class="lav-feature">
+          <span class="lav-icon">✨</span>
+          <h4>Lavado de Calidad</h4>
+          <p>Tratamos cada prenda con el cuidado que merece</p>
+        </div>
+        <div class="lav-feature">
+          <span class="lav-icon">💬</span>
+          <h4>Cotización al Instante</h4>
+          <p>Escríbenos y te respondemos al toque con el precio exacto</p>
+        </div>
+      </div>
+
+      <button class="order-btn lav-btn" onclick="openOrder('lavanderia')">
+        <span>👕 SOLICITAR LAVANDERÍA</span>
+        <div class="btn-glow"></div>
+      </button>
+    </div>
+  </section>
+
+  <!-- PEDIDO MODAL / SECTION -->
+  <section class="pedido-section" id="pedido">
+    <div class="section-label">
+      <span class="label-line"></span>
+      <span>HAZ TU PEDIDO</span>
+      <span class="label-line"></span>
+    </div>
+    <h2 class="section-title center">Pide <span class="highlight">directo</span> al WhatsApp</h2>
+    <p class="pedido-desc">Selecciona el servicio, completa tu pedido y te lo enviamos directamente al WhatsApp correspondiente.</p>
+
+    <div class="order-form-container">
+      <div class="service-selector">
+        <button class="svc-btn active" onclick="selectService('restaurante')" id="sbtn-restaurante">🍽️ Restaurante</button>
+        <button class="svc-btn" onclick="selectService('barber')" id="sbtn-barber">💈 Barber</button>
+        <button class="svc-btn" onclick="selectService('lavanderia')" id="sbtn-lavanderia">👕 Lavandería</button>
+      </div>
+
+      <div class="order-form">
+        <div class="form-group">
+          <label>Tu Nombre</label>
+          <input type="text" id="order-name" placeholder="¿Cómo te llamamos?" />
+        </div>
+        <div class="form-group">
+          <label>Tu dirección / referencia</label>
+          <input type="text" id="order-address" placeholder="¿Dónde te encontramos?" />
+        </div>
+        <div class="form-group">
+          <label id="order-label">Tu pedido (detalla lo que quieres)</label>
+          <textarea id="order-detail" placeholder="Ej: 1 Trío Marino + 1 Jugo de Mango + delivery a Los Sauces..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Mensaje adicional (opcional)</label>
+          <input type="text" id="order-extra" placeholder="Alguna indicación especial..." />
+        </div>
+        <button class="submit-order-btn" onclick="sendOrder()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <span>ENVIAR POR WHATSAPP</span>
+          <div class="btn-glow"></div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="footer-logo">MARINO</span>
+        <p>El ecosistema de servicios para el hombre moderno de Chiclayo.</p>
+        <div class="footer-social">
+          <a href="https://instagram.com/marino.cix" target="_blank">📷 @marino.cix</a>
+          <a href="https://instagram.com/marinobarberr" target="_blank">📷 @marinobarberr</a>
+          <a href="https://instagram.com/marinolavanderia" target="_blank">📷 @marinolavanderia</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h5>Servicios</h5>
+        <a href="#restaurante-section">Marino Restaurante</a>
+        <a href="#barber-section">Marino Barber</a>
+        <a href="#lavanderia-section">Marino Lavandería</a>
+      </div>
+      <div class="footer-contact">
+        <h5>Contacto</h5>
+        <p>🍽️ Restaurante: 990 854 675</p>
+        <p>💈 Barber: 970 736 968</p>
+        <p>👕 Lavandería: WhatsApp</p>
+        <p>📍 Urb. Los Sauces, Chiclayo</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Corporación Marino. Todos los derechos reservados.</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

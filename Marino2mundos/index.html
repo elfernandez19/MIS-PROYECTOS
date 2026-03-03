@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MARINO — Chiclayo</title>
+  <link rel="stylesheet" href="styles-index.css">
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo">MARI<span>N</span>O</a>
+    <div class="nav-right">
+      <span class="nav-tagline">Chiclayo · Perú</span>
+      <a href="admin.html" class="admin-link">⚙</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <p class="hero-eyebrow">// Restaurante · Barber</p>
+    <h1 class="hero-title">MARINO</h1>
+    <p class="hero-sub">Chiclayo &nbsp;·&nbsp; Perú</p>
+    <p class="hero-tagline">UNA VISIÓN, UN NOMBRE, UN LEGADO, DOS MUNDOS.</p>
+    <p class="hero-desc">
+      Dos experiencias únicas bajo una misma identidad. Diseñadas para la nueva generación que exige calidad en todo lo que hace.
+    </p>
+    <div class="hero-scroll">
+      <span>Descubrir</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- WHY MARINO -->
+  <section id="why">
+    <div class="why-grid">
+      <div class="why-img reveal">
+        <div class="img-placeholder">
+          <div class="icon">👤</div>
+          <p>Foto próximamente</p>
+        </div>
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+      </div>
+      <div class="why-text reveal" style="transition-delay:.15s;">
+        <div class="lbl">// Una Visión, Un Nombre, Un Legado, Dos Mundos.</div>
+        <h2>¿Por qué<br>MARINO?</h2>
+        <p>Marino nació del sueño de un joven emprendedor chiclayano con una visión clara: <strong>crear espacios de calidad</strong> para la nueva generación.</p>
+        <p>Un nombre que evoca fuerza, fluidez y carácter. Dos mundos — <strong>gastronomía y estilo</strong> — bajo una misma identidad construida con trabajo y orgullo chiclayano.</p>
+        <div class="stats">
+          <div class="stat"><div class="stat-n">2</div><div class="stat-l">Negocios</div></div>
+          <div class="stat"><div class="stat-n">1</div><div class="stat-l">Visión</div></div>
+          <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Potencial</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="svc-lbl reveal">// Nuestros mundos</div>
+    <h2 class="svc-title reveal" style="transition-delay:.1s;">Elige tu <span>destino</span></h2>
+    <div class="cards">
+
+      <!-- RESTAURANTE -->
+      <a href="restaurante.html" class="card card-rest reveal">
+        <div class="card-glow"></div>
+        <div class="c-inner">
+          <div class="c-num">01</div>
+          <span class="c-icon">🍽️</span>
+          <h3 class="c-name">Marino Restaurante</h3>
+          <span class="c-accent">Sabor · Calidad · Delivery</span>
+          <p class="c-desc">Ceviche, alitas, combos y más. Carta de mañana y noche. Delivery gratis a Sauces, Garita y Ensenada.</p>
+          <div class="c-divider"></div>
+          <div class="c-info">📍 Urb. Los Sauces Calle 11 Mz K Lote 4<br>📞 990 854 675 &nbsp;·&nbsp; @marino.cix</div>
+          <span class="c-btn">Ver carta y pedir →</span>
+        </div>
+      </a>
+
+      <!-- BARBER -->
+      <a href="barber.html" class="card card-barber reveal" style="transition-delay:.12s;">
+        <div class="card-glow"></div>
+        <div class="c-inner">
+          <div class="c-num">02</div>
+          <span class="c-icon">✂️</span>
+          <h3 class="c-name">Marino Barber</h3>
+          <span class="c-accent">Estilo · Premium · 2 Locales</span>
+          <p class="c-desc">Barbería para hombres de alto valor. Dos sucursales: Los Sauces y La Pradera. Reserva tu cita ahora.</p>
+          <div class="c-divider"></div>
+          <div class="c-info">📍 Los Sauces · La Pradera<br>📞 970 736 968 &nbsp;·&nbsp; @marinobarberr</div>
+          <span class="c-btn">Ver servicios y reservar →</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="f-logo">MARI<span>N</span>O</div>
+    <div class="f-txt">Una Visión · Un Nombre · Un Legado · Dos Mundos</div>
+    <div class="f-txt">© 2025 · Chiclayo · Perú</div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded',()=>{
+      const obs=new IntersectionObserver(entries=>{
+        entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),i*100);});
+      },{threshold:.1});
+      document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+    });
+  </script>
+</body>
+</html>

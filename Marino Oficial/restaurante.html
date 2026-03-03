@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marino Restaurante — Carta y Pedidos</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d0016">
+<link rel="stylesheet" href="styles-rest.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">MARI<span>N</span>O</a>
+  <a href="index.html" class="nav-back">← Inicio</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-wave"></div>
+  <div class="hero-content">
+    <p class="hero-tag">// Restaurante · Chiclayo</p>
+    <h1 class="hero-title">MARINO<br><span>RESTAURANTE</span></h1>
+    <p class="hero-desc" id="rest-desc">Sabor auténtico con identidad chiclaya. Ceviche, alitas, combos y mucho más. Delivery gratis a Sauces, Garita y Ensenada.</p>
+    <div class="hero-info">
+      <div class="info-item"><span>📍</span> <span id="rest-address">Urb. Los Sauces Calle 11 Mz K Lote 4</span></div>
+      <div class="info-item"><span>📞</span> <a href="tel:990854675" id="rest-phone">990 854 675</a></div>
+      <div class="info-item"><span>🛵</span> Delivery gratis: Sauces, Garita y Ensenada</div>
+    </div>
+  </div>
+</section>
+
+<!-- TIPO DE PEDIDO -->
+<div style="background:#0e0716;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);">
+  <div style="max-width:900px;margin:0 auto;">
+    <div style="font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#9980bb;margin-bottom:10px;">¿Cómo quieres tu pedido?</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;" id="tipo-btns">
+      <button class="tipo-btn active" onclick="setTipo('mesa')" id="tipo-mesa">🪑 En Mesa</button>
+      <button class="tipo-btn" onclick="setTipo('delivery')" id="tipo-delivery">🛵 Delivery</button>
+      <button class="tipo-btn" onclick="setTipo('llevar')" id="tipo-llevar">🥡 Para Llevar</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <button class="tab-btn active" data-tab="manana" onclick="switchTab('manana')">🌅 Mañana</button>
+  <button class="tab-btn" data-tab="noche" onclick="switchTab('noche')">🌙 Noche</button>
+</div>
+
+<div class="menu-panel active" id="panel-manana">
+  <div id="menu-manana-content"><div class="menu-loading">⏳ Cargando carta...</div></div>
+</div>
+<div class="menu-panel" id="panel-noche">
+  <div id="menu-noche-content"><div class="menu-loading">⏳ Cargando carta...</div></div>
+</div>
+
+<footer>© 2025 Marino Restaurante · Chiclayo</footer>
+
+<button class="order-toggle" id="order-toggle" onclick="toggleOrderPanel()" style="display:none;">
+  🛒 Mi Pedido <span class="order-badge" id="order-badge">0</span>
+</button>
+
+<!-- ORDER PANEL -->
+<div class="order-panel" id="order-panel">
+  <div class="order-inner">
+    <div class="order-title">Mi Pedido <button class="order-close" onclick="closeOrderPanel()">✕</button></div>
+
+    <!-- TIPO DE PEDIDO INFO -->
+    <div id="op-tipo-section" style="margin-bottom:14px;">
+      <div style="font-size:.62rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#6870a0;margin-bottom:8px;">Tipo de pedido</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="tipo-mini active" onclick="setTipo('mesa')" id="mini-mesa">🪑 Mesa</button>
+        <button class="tipo-mini" onclick="setTipo('delivery')" id="mini-delivery">🛵 Delivery</button>
+        <button class="tipo-mini" onclick="setTipo('llevar')" id="mini-llevar">🥡 Llevar</button>
+      </div>
+    </div>
+
+    <!-- MESA SELECTOR -->
+    <div id="op-mesa-section" style="margin-bottom:14px;">
+      <div style="font-size:.62rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#6870a0;margin-bottom:8px;">Número de mesa</div>
+      <div id="mesas-btns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+
+    <!-- DELIVERY FIELDS -->
+    <div id="op-delivery-section" style="display:none;margin-bottom:14px;">
+      <div class="form-group">
+        <label class="form-label">Dirección de entrega</label>
+        <input type="text" class="form-input" id="inp-address" placeholder="Calle, Urb., referencia">
+      </div>
+    </div>
+
+    <div class="order-list" id="order-list"><div class="order-empty">Aún no has seleccionado nada.</div></div>
+    <div class="order-total-row">
+      <span class="order-total-label">Total</span>
+      <span class="order-total-val" id="order-total">S/0.00</span>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tu nombre</label><input type="text" class="form-input" id="inp-name" placeholder="Ej: Juan Pérez"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">Notas adicionales</label>
+      <textarea class="form-input" id="inp-notes" placeholder="Sin cebolla, sin picante, etc."></textarea>
+    </div>
+
+    <!-- PAGO -->
+    <div style="margin-bottom:14px;">
+      <div style="font-size:.62rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#6870a0;margin-bottom:8px;">Método de pago</div>
+      <div style="display:flex;gap:8px;">
+        <button class="tipo-mini active" onclick="setPago('efectivo')" id="pago-efectivo">💵 Efectivo</button>
+        <button class="tipo-mini" onclick="setPago('yape')" id="pago-yape">💜 Yape</button>
+      </div>
+    </div>
+
+    <!-- YAPE QR (oculto por defecto) -->
+    <div id="yape-section" style="display:none;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);padding:16px;margin-bottom:14px;text-align:center;">
+      <div style="font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#9d4de6;margin-bottom:8px;">💜 PAGAR CON YAPE</div>
+      <div id="yape-qr-container" style="margin:0 auto 10px;width:160px;height:160px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;">
+        <span style="color:#6870a0;font-size:.8rem;">Cargando QR...</span>
+      </div>
+      <div id="yape-name-display" style="font-size:.85rem;font-weight:700;color:#eef0ff;"></div>
+      <div id="yape-phone-display" style="font-size:.8rem;color:#9980bb;margin-top:2px;"></div>
+      <div style="font-size:.72rem;color:#6870a0;margin-top:8px;">Escanea el QR con tu app Yape y adjunta el comprobante en WhatsApp</div>
+    </div>
+
+    <button class="wa-btn" id="wa-btn" onclick="sendWhatsApp()" disabled>💬 Enviar pedido por WhatsApp</button>
+  </div>
+</div>
+
+<style>
+.menu-loading{padding:40px;text-align:center;color:#9980bb;font-size:.9rem;letter-spacing:2px;}
+.tipo-btn{padding:9px 18px;font-size:.75rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;background:transparent;border:1px solid rgba(255,255,255,.1);color:#9980bb;cursor:pointer;transition:all .2s;border-radius:2px;}
+.tipo-btn.active{background:rgba(155,80,255,.15);border-color:#9d4de6;color:#c080ff;}
+.tipo-mini{padding:7px 14px;font-size:.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:transparent;border:1px solid rgba(255,255,255,.1);color:#9980bb;cursor:pointer;transition:all .2s;}
+.tipo-mini.active{background:rgba(155,80,255,.15);border-color:#9d4de6;color:#c080ff;}
+.mesa-num-btn{width:42px;height:42px;font-size:.9rem;font-weight:900;background:transparent;border:1px solid rgba(255,255,255,.1);color:#9980bb;cursor:pointer;transition:all .2s;}
+.mesa-num-btn.active{background:rgba(0,204,122,.15);border-color:#00cc7a;color:#00cc7a;}
+</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, collection, onSnapshot, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDrZx8FNu2wPpc01nCx6XCf7brackxnYuM",
+  authDomain: "marino-chiclayo.firebaseapp.com",
+  projectId: "marino-chiclayo",
+  storageBucket: "marino-chiclayo.firebasestorage.app",
+  messagingSenderId: "637873320955",
+  appId: "1:637873320955:web:e5ab4d1ce1e259443e515e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const PHONE = '51990854675';
+const order = {};
+let currentTipo = 'mesa';
+let currentMesa = null;
+let currentPago = 'efectivo';
+let yapeConfig = {};
+
+// ── LOAD CONFIG ──────────────────────────
+async function loadTextos() {
+  try {
+    const snap = await getDoc(doc(db,'config','textos'));
+    if (snap.exists()) {
+      const d = snap.data();
+      if (d.rest_desc)    document.getElementById('rest-desc').textContent    = d.rest_desc;
+      if (d.rest_address) document.getElementById('rest-address').textContent = d.rest_address;
+      if (d.rest_phone)   document.getElementById('rest-phone').textContent   = d.rest_phone;
+    }
+  } catch(e) {}
+}
+
+async function loadYapeConfig() {
+  try {
+    const snap = await getDoc(doc(db,'config','yape'));
+    if (snap.exists()) {
+      yapeConfig = snap.data();
+      const qrEl = document.getElementById('yape-qr-container');
+      if (yapeConfig.qrUrl) qrEl.innerHTML = `<img src="${yapeConfig.qrUrl}" style="width:100%;height:100%;object-fit:contain;">`;
+      if (yapeConfig.name)  document.getElementById('yape-name-display').textContent  = yapeConfig.name;
+      if (yapeConfig.phone) document.getElementById('yape-phone-display').textContent = '📱 ' + yapeConfig.phone;
+    }
+  } catch(e) {}
+}
+
+async function loadMesas() {
+  try {
+    const snap = await getDocs(collection(db,'mesas'));
+    const mesas = [];
+    snap.forEach(d => mesas.push({id:d.id,...d.data()}));
+    mesas.sort((a,b)=>(a.num||0)-(b.num||0));
+    if (mesas.length) {
+      document.getElementById('mesas-btns').innerHTML = mesas.map(m =>
+        `<button class="mesa-num-btn" id="mesa-btn-${m.num}" onclick="selectMesa(${m.num})">${m.num}</button>`
+      ).join('');
+    } else {
+      // Default 10 mesas
+      document.getElementById('mesas-btns').innerHTML = Array.from({length:10},(_,i)=>
+        `<button class="mesa-num-btn" id="mesa-btn-${i+1}" onclick="selectMesa(${i+1})">${i+1}</button>`
+      ).join('');
+    }
+  } catch(e) {
+    document.getElementById('mesas-btns').innerHTML = Array.from({length:10},(_,i)=>
+      `<button class="mesa-num-btn" id="mesa-btn-${i+1}" onclick="selectMesa(${i+1})">${i+1}</button>`
+    ).join('');
+  }
+}
+
+// ── TIPO DE PEDIDO ────────────────────────
+window.setTipo = function(tipo) {
+  currentTipo = tipo;
+  // Update top buttons
+  ['mesa','delivery','llevar'].forEach(t => {
+    const b = document.getElementById('tipo-'+t);
+    const m = document.getElementById('mini-'+t);
+    if (b) b.classList.toggle('active', t===tipo);
+    if (m) m.classList.toggle('active', t===tipo);
+  });
+  document.getElementById('op-mesa-section').style.display     = tipo==='mesa'     ? '' : 'none';
+  document.getElementById('op-delivery-section').style.display = tipo==='delivery' ? '' : 'none';
+  if (tipo !== 'mesa') currentMesa = null;
+  updateOrderUI();
+};
+
+window.selectMesa = function(num) {
+  currentMesa = num;
+  document.querySelectorAll('.mesa-num-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('mesa-btn-'+num);
+  if (btn) btn.classList.add('active');
+  updateOrderUI();
+};
+
+window.setPago = function(pago) {
+  currentPago = pago;
+  ['efectivo','yape'].forEach(p => {
+    const b = document.getElementById('pago-'+p);
+    if (b) b.classList.toggle('active', p===pago);
+  });
+  document.getElementById('yape-section').style.display = pago==='yape' ? '' : 'none';
+};
+
+// ── MENU ──────────────────────────────────
+function listenMenu(colName, renderFn) {
+  onSnapshot(collection(db, colName), snap => {
+    const items = [];
+    snap.forEach(d => items.push({id:d.id,...d.data()}));
+    items.sort((a,b)=>(a.order||0)-(b.order||0));
+    renderFn(items);
+  });
+}
+
+function renderManana(items) {
+  if (!items.length) { document.getElementById('menu-manana-content').innerHTML = buildStaticManana(); return; }
+  const cats = {};
+  items.forEach(item => { const c=item.category||'Otros'; if(!cats[c])cats[c]=[]; cats[c].push(item); });
+  let html='';
+  Object.entries(cats).forEach(([cat,prods])=>{
+    html+=`<div class="menu-section reveal"><div class="menu-section-title">${cat}</div><div class="menu-items">`;
+    prods.forEach(p=>{html+=buildItemRow(p);});
+    html+=`</div></div>`;
+  });
+  document.getElementById('menu-manana-content').innerHTML=html;
+  initReveal();
+}
+
+function renderNoche(items) {
+  if (!items.length) { document.getElementById('menu-noche-content').innerHTML = buildStaticNoche(); return; }
+  const cats = {};
+  items.forEach(item => { const c=item.category||'Otros'; if(!cats[c])cats[c]=[]; cats[c].push(item); });
+  let html='';
+  Object.entries(cats).forEach(([cat,prods])=>{
+    html+=`<div class="menu-section reveal"><div class="menu-section-title">${cat}</div><div class="menu-items">`;
+    prods.forEach(p=>{html+=buildItemRow(p);});
+    html+=`</div></div>`;
+  });
+  document.getElementById('menu-noche-content').innerHTML=html;
+  initReveal();
+}
+
+function buildItemRow(p) {
+  const safeId='p_'+p.id.replace(/[^a-zA-Z0-9]/g,'_');
+  return `
+    <div class="menu-item" id="row-${safeId}">
+      <div class="mi-info">
+        <div class="mi-name">${p.name}</div>
+        ${p.desc?`<div class="mi-desc">${p.desc}</div>`:''}
+      </div>
+      <div class="mi-price">S/${parseFloat(p.price||0).toFixed(0)}</div>
+      <div class="mi-qty">
+        <button class="qty-btn" onclick="changeQty('${safeId}',\`${escJs(p.name)}\`,${p.price||0},-1)">−</button>
+        <span class="qty-val" id="qty-${safeId}">0</span>
+        <button class="qty-btn" onclick="changeQty('${safeId}',\`${escJs(p.name)}\`,${p.price||0},1)">+</button>
+      </div>
+    </div>`;
+}
+
+function escJs(s){ return (s||'').replace(/`/g,'\\`').replace(/\$/g,'\\$'); }
+
+// ── ORDER LOGIC ───────────────────────────
+window.changeQty = function(id, name, price, delta) {
+  if (!order[id]) order[id]={name,price,qty:0};
+  order[id].qty=Math.max(0,order[id].qty+delta);
+  const el=document.getElementById('qty-'+id);
+  if(el)el.textContent=order[id].qty;
+  const row=document.getElementById('row-'+id);
+  if(row)row.classList.toggle('selected',order[id].qty>0);
+  if(order[id].qty===0)delete order[id];
+  updateOrderUI();
+};
+
+function updateOrderUI() {
+  const items=Object.values(order);
+  const total=items.reduce((s,i)=>s+i.price*i.qty,0);
+  const count=items.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('order-badge').textContent=count;
+  document.getElementById('order-toggle').style.display=count>0?'flex':'none';
+  document.getElementById('order-list').innerHTML=items.length===0
+    ?'<div class="order-empty">Aún no has seleccionado nada.</div>'
+    :items.map(i=>`<div class="order-row"><span class="order-row-name">${i.qty}x ${i.name}</span><span class="order-row-price">S/${(i.price*i.qty).toFixed(2)}</span></div>`).join('');
+  document.getElementById('order-total').textContent=`S/${total.toFixed(2)}`;
+
+  // Enable button only if mesa selected (when tipo=mesa) or tipo is delivery/llevar
+  const canOrder = count>0 && (currentTipo!=='mesa' || currentMesa!==null);
+  document.getElementById('wa-btn').disabled=!canOrder;
+  if(currentTipo==='mesa' && count>0 && !currentMesa) {
+    document.getElementById('wa-btn').textContent='🪑 Selecciona una mesa primero';
+  } else {
+    document.getElementById('wa-btn').textContent='💬 Enviar pedido por WhatsApp';
+  }
+}
+
+window.toggleOrderPanel=()=>document.getElementById('order-panel').classList.toggle('open');
+window.closeOrderPanel =()=>document.getElementById('order-panel').classList.remove('open');
+window.switchTab=function(tab){
+  document.querySelectorAll('.menu-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+};
+
+// ── WHATSAPP ──────────────────────────────
+window.sendWhatsApp = function() {
+  const items=Object.values(order);
+  if(!items.length)return;
+  if(currentTipo==='mesa'&&!currentMesa){alert('Por favor selecciona tu número de mesa.');return;}
+
+  const name    = document.getElementById('inp-name').value.trim()    || 'Cliente';
+  const address = document.getElementById('inp-address').value.trim() || '';
+  const notes   = document.getElementById('inp-notes').value.trim()   || '';
+  const total   = items.reduce((s,i)=>s+i.price*i.qty,0);
+
+  // Save to localStorage
+  try {
+    const orders=JSON.parse(localStorage.getItem('marino_orders')||'[]');
+    const now=new Date();
+    orders.push({id:Date.now(),service:'restaurante',items,total,customer:{name,address,mesa:currentMesa},tipo:currentTipo,pago:currentPago,date:now.toISOString(),day:now.toLocaleDateString('es-PE'),month:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,year:String(now.getFullYear())});
+    localStorage.setItem('marino_orders',JSON.stringify(orders));
+  } catch(e){}
+
+  // Also send to Firestore live orders
+  try {
+    const itemsText = items.map(i=>`${i.qty}x ${i.name}`).join('\n');
+    addDoc(collection(db,'pedidos_live'),{
+      customer:name, type:currentTipo, mesa:currentMesa, address,
+      items:itemsText, total, pago:currentPago, status:'proceso',
+      createdAt:Date.now(), source:'whatsapp'
+    });
+  } catch(e){}
+
+  const tipoLabel = currentTipo==='mesa' ? `Mesa #${currentMesa}` : currentTipo==='delivery' ? `🛵 Delivery · ${address}` : '🥡 Para llevar';
+  const pagoLabel = currentPago==='yape' ? '💜 Yape' : '💵 Efectivo';
+
+  let msg=`🍽️ *PEDIDO — MARINO RESTAURANTE*\n\n`;
+  msg+=`👤 *Nombre:* ${name}\n`;
+  msg+=`📋 *Tipo:* ${tipoLabel}\n`;
+  msg+=`💳 *Pago:* ${pagoLabel}\n\n`;
+  msg+=`📋 *Pedido:*\n`;
+  items.forEach(i=>{msg+=`  • ${i.qty}x ${i.name} — S/${(i.price*i.qty).toFixed(2)}\n`;});
+  msg+=`\n💰 *Total:* S/${total.toFixed(2)}\n`;
+  if(notes)msg+=`📝 *Notas:* ${notes}\n`;
+  if(currentPago==='yape')msg+=`\n💜 *Pago por Yape* — Por favor adjunta el comprobante de pago.\n`;
+  msg+=`\n_Pedido desde marinochiclayo.com_`;
+  window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+function initReveal() {
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+
+function buildStaticManana() {
+  return `<div style="padding:20px;text-align:center;color:#9980bb;font-size:.85rem;">La carta se cargará pronto. Contacta al restaurante directamente.</div>`;
+}
+function buildStaticNoche() {
+  return `<div style="padding:20px;text-align:center;color:#9980bb;font-size:.85rem;">La carta nocturna se cargará pronto. Contacta al restaurante directamente.</div>`;
+}
+
+// ── INIT ─────────────────────────────────
+loadTextos();
+loadYapeConfig();
+loadMesas();
+listenMenu('productos_rest_manana', renderManana);
+listenMenu('productos_rest_noche',  renderNoche);
+initReveal();
+</script>
+<script src="script-rest.js"></script>
+</body>
+</html>

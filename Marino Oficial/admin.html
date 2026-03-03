@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marino — Panel Administrador</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#07080d;--bg2:#0e0f18;--bg3:#14162a;
+  --gold:#ffd700;--purple:#7a28c8;--purple-l:#9d4de6;
+  --teal:#00cc7a;--blue:#4db8ff;--red:#ff4466;--orange:#ff8c00;
+  --text:#eef0ff;--muted:#6870a0;--border:rgba(255,255,255,.07);
+}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;}
+
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,rgba(122,40,200,.18) 0%,transparent 60%),var(--bg);}
+.login-box{width:100%;max-width:380px;padding:48px 40px;background:var(--bg2);border:1px solid var(--border);text-align:center;}
+.login-logo{font-family:'Bebas Neue',cursive;font-size:2.5rem;letter-spacing:6px;color:var(--text);margin-bottom:4px;}
+.login-logo span{color:var(--gold);}
+.login-sub{font-size:.65rem;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:36px;}
+.lbl{display:block;font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;text-align:left;}
+.linp{width:100%;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);font-family:'Nunito';font-size:1rem;outline:none;margin-bottom:16px;transition:border-color .2s;}
+.linp:focus{border-color:var(--purple-l);}
+.linp::placeholder{color:rgba(255,255,255,.18);}
+.login-btn{width:100%;padding:14px;background:var(--purple);border:none;color:#fff;font-family:'Nunito';font-size:.88rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:8px;}
+.login-btn:hover{background:var(--purple-l);}
+.login-err{color:var(--red);font-size:.8rem;font-weight:700;margin-top:12px;display:none;}
+
+/* LAYOUT */
+#dashboard{display:none;}
+.topbar{position:sticky;top:0;z-index:200;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,8,13,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.topbar-logo{font-family:'Bebas Neue',cursive;font-size:1.6rem;letter-spacing:5px;color:var(--text);}
+.topbar-logo span{color:var(--gold);}
+.topbar-r{display:flex;align-items:center;gap:16px;}
+.admin-badge{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.admin-badge strong{color:var(--gold);}
+.logout-btn{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--red);background:none;border:1px solid rgba(255,68,102,.2);padding:6px 14px;cursor:pointer;transition:all .2s;}
+.logout-btn:hover{background:rgba(255,68,102,.1);}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);padding:0 32px;overflow-x:auto;}
+.tab{padding:16px 20px;font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;background:none;border:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab:hover:not(.active){color:var(--text);}
+.tab-panel{display:none;padding:28px 32px;}
+.tab-panel.active{display:block;}
+
+/* VENTAS / PEDIDOS */
+.period-bar{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;align-items:center;}
+.period-lbl{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.pbtn{padding:8px 16px;font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .2s;}
+.pbtn.active{background:var(--gold);border-color:var(--gold);color:#000;}
+.pbtn:hover:not(.active){border-color:var(--gold);color:var(--gold);}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.kpi{padding:20px 16px;background:var(--bg2);border:1px solid var(--border);}
+.kpi-lbl{font-size:.58rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.kpi-val{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:1px;}
+.kpi-val.gold{color:var(--gold);}
+.kpi-val.teal{color:var(--teal);}
+.kpi-val.purple{color:var(--purple-l);}
+.kpi-sub{font-size:.7rem;color:var(--muted);margin-top:4px;}
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.chart-box{padding:24px;background:var(--bg2);border:1px solid var(--border);}
+.chart-ttl{font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:2px;color:var(--text);margin-bottom:16px;}
+.chart-ttl small{font-family:'Nunito';font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-left:8px;}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+.bk-card{padding:20px;background:var(--bg2);border:1px solid var(--border);}
+.bk-svc{font-size:.6rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+.bk-svc.r{color:var(--purple-l);}
+.bk-svc.s{color:var(--teal);}
+.bk-svc.p{color:var(--blue);}
+.bk-total{font-family:'Bebas Neue',cursive;font-size:1.8rem;color:var(--text);}
+.bk-n{font-size:.72rem;color:var(--muted);margin-top:4px;}
+.tbl-box{padding:24px;background:var(--bg2);border:1px solid var(--border);}
+.orders-tbl{width:100%;border-collapse:collapse;margin-top:14px;}
+.orders-tbl th{font-size:.58rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;}
+.orders-tbl td{padding:10px 12px;font-size:.82rem;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text);}
+.orders-tbl tr:hover td{background:rgba(255,255,255,.02);}
+.tag{display:inline-block;padding:2px 8px;font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+.tag.r{background:rgba(122,40,200,.2);color:#c080ff;}
+.tag.s{background:rgba(0,180,100,.15);color:var(--teal);}
+.tag.p{background:rgba(0,100,255,.15);color:var(--blue);}
+.tag.proceso{background:rgba(255,140,0,.15);color:var(--orange);}
+.tag.pagado{background:rgba(0,204,122,.15);color:var(--teal);}
+.tag.entrega{background:rgba(77,184,255,.15);color:var(--blue);}
+.tag.entregado{background:rgba(255,215,0,.15);color:var(--gold);}
+.price-cell{color:var(--gold);font-family:'Bebas Neue';font-size:1rem;}
+.no-data{text-align:center;padding:40px 20px;color:var(--muted);}
+.no-data .ndi{font-size:2.5rem;margin-bottom:10px;}
+
+/* PEDIDOS EN VIVO */
+.orders-live-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:20px;}
+.order-card{background:var(--bg2);border:1px solid var(--border);padding:18px;border-radius:2px;transition:border-color .2s;}
+.order-card.proceso{border-left:3px solid var(--orange);}
+.order-card.pagado{border-left:3px solid var(--teal);}
+.order-card.entrega{border-left:3px solid var(--blue);}
+.order-card.entregado{border-left:3px solid var(--gold);opacity:.7;}
+.oc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.oc-id{font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;color:var(--muted);}
+.oc-time{font-size:.7rem;color:var(--muted);}
+.oc-name{font-weight:800;font-size:.95rem;margin-bottom:4px;}
+.oc-type{font-size:.7rem;color:var(--muted);margin-bottom:8px;}
+.oc-items{font-size:.78rem;color:var(--muted);margin-bottom:10px;border-top:1px solid var(--border);padding-top:8px;}
+.oc-item{padding:2px 0;}
+.oc-total{font-family:'Bebas Neue';font-size:1.2rem;color:var(--gold);margin-bottom:10px;}
+.oc-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.oc-btn{flex:1;padding:7px 10px;font-size:.65rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;border:1px solid;cursor:pointer;background:none;transition:all .2s;font-family:'Nunito';}
+.oc-btn.pagar{border-color:rgba(0,204,122,.3);color:var(--teal);}
+.oc-btn.pagar:hover{background:rgba(0,204,122,.1);}
+.oc-btn.entregar{border-color:rgba(77,184,255,.3);color:var(--blue);}
+.oc-btn.entregar:hover{background:rgba(77,184,255,.1);}
+.oc-btn.completar{border-color:rgba(255,215,0,.3);color:var(--gold);}
+.oc-btn.completar:hover{background:rgba(255,215,0,.1);}
+.oc-btn.eliminar{border-color:rgba(255,68,102,.2);color:var(--red);}
+.oc-btn.eliminar:hover{background:rgba(255,68,102,.1);}
+.status-filter{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.sfbtn{padding:7px 14px;font-size:.68rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .2s;}
+.sfbtn.active{background:var(--purple);border-color:var(--purple);color:#fff;}
+
+/* MESAS */
+.mesas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-bottom:20px;}
+.mesa-card{background:var(--bg2);border:1px solid var(--border);padding:16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.mesa-card:hover{border-color:var(--gold);}
+.mesa-card.ocupada{border-color:var(--red);background:rgba(255,68,102,.05);}
+.mesa-card.libre{border-color:var(--teal);background:rgba(0,204,122,.05);}
+.mesa-num{font-family:'Bebas Neue';font-size:2rem;letter-spacing:2px;}
+.mesa-status{font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+.mesa-card.libre .mesa-status{color:var(--teal);}
+.mesa-card.ocupada .mesa-status{color:var(--red);}
+.mesa-card .mesa-pedido{font-size:.7rem;color:var(--muted);margin-top:4px;}
+
+/* EDITOR */
+.editor-layout{display:grid;grid-template-columns:220px 1fr;gap:0;min-height:calc(100vh - 160px);background:var(--bg2);border:1px solid var(--border);}
+.editor-sidebar{border-right:1px solid var(--border);padding:20px 0;}
+.esb-title{font-size:.6rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding:0 20px 12px;}
+.esb-btn{display:block;width:100%;padding:12px 20px;background:none;border:none;color:var(--muted);font-family:'Nunito';font-size:.82rem;font-weight:700;text-align:left;cursor:pointer;transition:all .2s;border-left:2px solid transparent;}
+.esb-btn:hover{background:rgba(255,255,255,.03);color:var(--text);}
+.esb-btn.active{color:var(--gold);border-left-color:var(--gold);background:rgba(255,215,0,.04);}
+.editor-main{padding:28px;}
+.editor-section{display:none;}
+.editor-section.active{display:block;}
+.editor-section-title{font-family:'Bebas Neue',cursive;font-size:1.4rem;letter-spacing:2px;color:var(--text);margin-bottom:6px;}
+.editor-section-sub{font-size:.78rem;color:var(--muted);margin-bottom:24px;}
+
+/* PRODUCT LIST */
+.product-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.product-row{display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);transition:border-color .2s;}
+.product-row:hover{border-color:rgba(255,255,255,.12);}
+.pr-name{flex:1;font-size:.9rem;font-weight:700;color:var(--text);}
+.pr-desc{font-size:.75rem;color:var(--muted);margin-top:2px;}
+.pr-price{font-family:'Bebas Neue',cursive;font-size:1.1rem;color:var(--gold);min-width:60px;text-align:right;}
+.pr-actions{display:flex;gap:6px;}
+.pr-btn{padding:6px 12px;font-size:.65rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:none;border:1px solid;cursor:pointer;transition:all .2s;}
+.pr-btn.edit{border-color:rgba(122,40,200,.3);color:var(--purple-l);}
+.pr-btn.edit:hover{background:rgba(122,40,200,.1);}
+.pr-btn.del{border-color:rgba(255,68,102,.3);color:var(--red);}
+.pr-btn.del:hover{background:rgba(255,68,102,.1);}
+
+/* FORMS */
+.add-form{background:rgba(255,215,0,.03);border:1px solid rgba(255,215,0,.1);padding:20px;margin-bottom:20px;}
+.add-form-title{font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.flbl{font-size:.62rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.finp{padding:10px 13px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);font-family:'Nunito';font-size:.9rem;outline:none;transition:border-color .2s;width:100%;}
+.finp:focus{border-color:var(--purple-l);}
+.finp::placeholder{color:rgba(255,255,255,.18);}
+.finp option{background:var(--bg3);}
+.save-btn{padding:11px 24px;background:var(--purple);border:none;color:#fff;font-family:'Nunito';font-size:.78rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+.save-btn:hover{background:var(--purple-l);}
+.save-btn.teal{background:var(--teal);color:#000;}
+.save-btn.teal:hover{background:#00e896;}
+.save-btn.gold{background:var(--gold);color:#000;}
+.save-btn.gold:hover{background:#ffe84d;}
+.cancel-btn{padding:11px 20px;background:none;border:1px solid var(--border);color:var(--muted);font-family:'Nunito';font-size:.78rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-left:8px;transition:all .2s;}
+.cancel-btn:hover{border-color:var(--text);color:var(--text);}
+
+/* TEXT EDITOR */
+.text-fields{display:flex;flex-direction:column;gap:18px;max-width:600px;}
+.tf-group{display:flex;flex-direction:column;gap:6px;}
+.tf-lbl{font-size:.62rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+.tf-inp{padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);font-family:'Nunito';font-size:.9rem;outline:none;transition:border-color .2s;width:100%;}
+.tf-inp:focus{border-color:var(--gold);}
+textarea.tf-inp{resize:vertical;min-height:80px;}
+
+/* IMAGE UPLOAD */
+.img-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.img-card{background:rgba(255,255,255,.02);border:1px solid var(--border);padding:16px;text-align:center;}
+.img-preview{width:100%;height:120px;object-fit:cover;margin-bottom:10px;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--muted);overflow:hidden;}
+.img-preview img{width:100%;height:100%;object-fit:cover;}
+.img-lbl{font-size:.62rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:block;}
+.img-upload{display:none;}
+.img-upload-btn{display:block;padding:8px;background:none;border:1px dashed rgba(255,255,255,.15);color:var(--muted);font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;width:100%;}
+.img-upload-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* USUARIOS */
+.users-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.user-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);}
+.user-avatar{width:36px;height:36px;background:var(--purple);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;flex-shrink:0;}
+.user-info{flex:1;}
+.user-name{font-weight:800;font-size:.9rem;}
+.user-role{font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+.user-role.admin{color:var(--gold);}
+.user-role.worker{color:var(--teal);}
+
+/* YAPE QR */
+.yape-section{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;}
+.yape-preview{width:200px;height:200px;border:2px dashed rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted);flex-shrink:0;}
+.yape-preview img{width:100%;height:100%;object-fit:contain;}
+.yape-info{flex:1;min-width:200px;}
+.yape-title{font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:2px;color:#7c3aed;margin-bottom:8px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg3);border:1px solid var(--gold);color:var(--gold);padding:12px 28px;font-size:.8rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.err{border-color:var(--red);color:var(--red);}
+
+/* LOADING */
+.loading{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.8rem;font-weight:700;padding:20px 0;}
+.spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9000;align-items:center;justify-content:center;padding:20px;}
+.modal-box{background:var(--bg2);border:1px solid var(--border);padding:32px;width:100%;max-width:440px;}
+.modal-title{font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:3px;margin-bottom:20px;}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;}
+
+/* SECTION DIVIDER */
+.sec-divider{font-size:.6rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding:16px 0 8px;border-top:1px solid var(--border);margin-top:16px;}
+
+@media(max-width:1024px){.kpi-grid{grid-template-columns:repeat(2,1fr);}.charts-row{grid-template-columns:1fr;}.breakdown{grid-template-columns:1fr;}}
+@media(max-width:768px){.topbar,.tab-panel{padding-left:16px;padding-right:16px;}.tabs{padding:0 16px;}.editor-layout{grid-template-columns:1fr;}.editor-sidebar{border-right:none;border-bottom:1px solid var(--border);padding:12px;display:flex;gap:4px;overflow-x:auto;}.esb-btn{white-space:nowrap;border-left:none;border-bottom:2px solid transparent;padding:8px 14px;}.esb-btn.active{border-left:none;border-bottom-color:var(--gold);}.form-grid{grid-template-columns:1fr;}.img-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">MARI<span>N</span>O</div>
+    <div class="login-sub">Panel Administrador</div>
+    <label class="lbl">Usuario</label>
+    <input type="text" class="linp" id="lu" placeholder="Usuario" autocomplete="off">
+    <label class="lbl">Contraseña</label>
+    <input type="password" class="linp" id="lp" placeholder="••••••••">
+    <button class="login-btn" onclick="doLogin()">Ingresar</button>
+    <div class="login-err" id="lerr">Usuario o contraseña incorrectos.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="topbar-logo">MARI<span>N</span>O</div>
+    <div class="topbar-r">
+      <div class="admin-badge">Admin: <strong id="topbar-user">EDINSON MARINO</strong></div>
+      <button class="logout-btn" onclick="doLogout()">Salir</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('pedidos')">📋 Pedidos en Vivo</button>
+    <button class="tab" onclick="switchTab('mesas')">🪑 Mesas</button>
+    <button class="tab" onclick="switchTab('ventas')">📊 Ventas</button>
+    <button class="tab" onclick="switchTab('editor')">✏️ Editor de Página</button>
+    <button class="tab" onclick="switchTab('usuarios')" id="tab-usuarios-btn">👥 Usuarios</button>
+  </div>
+
+  <!-- ══════════════════════════════
+       TAB: PEDIDOS EN VIVO
+  ══════════════════════════════ -->
+  <div class="tab-panel active" id="tab-pedidos">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:2px;">Pedidos en Vivo</div>
+        <div style="font-size:.75rem;color:var(--muted);">Se actualizan en tiempo real</div>
+      </div>
+      <button class="save-btn gold" onclick="openNuevoPedido()">➕ Nuevo Pedido Manual</button>
+    </div>
+    <div class="status-filter">
+      <span style="font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);align-self:center;">Filtrar:</span>
+      <button class="sfbtn active" onclick="filterOrders('todos')" id="sf-todos">Todos</button>
+      <button class="sfbtn" onclick="filterOrders('proceso')" id="sf-proceso">🟠 En Proceso</button>
+      <button class="sfbtn" onclick="filterOrders('pagado')" id="sf-pagado">🟢 Pagado</button>
+      <button class="sfbtn" onclick="filterOrders('entrega')" id="sf-entrega">🔵 En Entrega</button>
+      <button class="sfbtn" onclick="filterOrders('entregado')" id="sf-entregado">✅ Entregado</button>
+      <button class="sfbtn" onclick="filterOrders('delivery')" id="sf-delivery">🛵 Delivery</button>
+    </div>
+    <div class="orders-live-grid" id="orders-live-grid">
+      <div class="loading"><div class="spin"></div>Cargando pedidos...</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       TAB: MESAS
+  ══════════════════════════════ -->
+  <div class="tab-panel" id="tab-mesas">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:2px;">Mapa de Mesas</div>
+        <div style="font-size:.75rem;color:var(--muted);">Haz clic en una mesa para ver su estado</div>
+      </div>
+      <button class="save-btn" onclick="addMesa()">➕ Agregar Mesa</button>
+    </div>
+    <div class="mesas-grid" id="mesas-grid">
+      <div class="loading"><div class="spin"></div>Cargando mesas...</div>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--teal);">🟢 Libre</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--red);">🔴 Ocupada</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       TAB: VENTAS
+  ══════════════════════════════ -->
+  <div class="tab-panel" id="tab-ventas">
+    <div class="period-bar">
+      <span class="period-lbl">Ver por:</span>
+      <button class="pbtn active" id="pbtn-dia"    onclick="setPeriod('dia')">Hoy</button>
+      <button class="pbtn"        id="pbtn-semana" onclick="setPeriod('semana')">Semana</button>
+      <button class="pbtn"        id="pbtn-mes"    onclick="setPeriod('mes')">Mes</button>
+      <button class="pbtn"        id="pbtn-year"   onclick="setPeriod('year')">Año</button>
+      <button class="pbtn"        id="pbtn-todo"   onclick="setPeriod('todo')">Todo</button>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-lbl">Total Ventas</div><div class="kpi-val gold" id="kpi-total">S/0.00</div><div class="kpi-sub" id="kpi-plbl">Hoy</div></div>
+      <div class="kpi"><div class="kpi-lbl">Pedidos</div><div class="kpi-val" id="kpi-cnt">0</div><div class="kpi-sub">Transacciones</div></div>
+      <div class="kpi"><div class="kpi-lbl">Ticket Promedio</div><div class="kpi-val teal" id="kpi-avg">S/0.00</div><div class="kpi-sub">Por pedido</div></div>
+      <div class="kpi"><div class="kpi-lbl">Mejor Servicio</div><div class="kpi-val purple" id="kpi-top" style="font-size:1.1rem;">—</div><div class="kpi-sub">Por ingresos</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-box"><div class="chart-ttl">Ventas por Período <small id="chart-lbl">— Hoy</small></div><canvas id="chart-bar" height="200"></canvas></div>
+      <div class="chart-box"><div class="chart-ttl">Por Servicio</div><canvas id="chart-pie" height="200"></canvas></div>
+    </div>
+    <div class="breakdown">
+      <div class="bk-card"><div class="bk-svc r">🍽️ Restaurante</div><div class="bk-total" id="bk-rest">S/0.00</div><div class="bk-n" id="bk-rest-n">0 pedidos</div></div>
+      <div class="bk-card"><div class="bk-svc s">✂️ Barber Los Sauces</div><div class="bk-total" id="bk-sauces">S/0.00</div><div class="bk-n" id="bk-sauces-n">0 citas</div></div>
+      <div class="bk-card"><div class="bk-svc p">✂️ Barber La Pradera</div><div class="bk-total" id="bk-pradera">S/0.00</div><div class="bk-n" id="bk-pradera-n">0 citas</div></div>
+    </div>
+    <div class="tbl-box">
+      <div class="chart-ttl">Historial de Pedidos</div>
+      <div id="orders-wrap"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       TAB: EDITOR
+  ══════════════════════════════ -->
+  <div class="tab-panel" id="tab-editor">
+    <div class="editor-layout">
+      <div class="editor-sidebar">
+        <div class="esb-title">Secciones</div>
+        <button class="esb-btn active" onclick="switchEditor('textos',event)">📝 Textos Generales</button>
+        <button class="esb-btn" onclick="switchEditor('rest-manana',event)">🍽️ Rest. Mañana</button>
+        <button class="esb-btn" onclick="switchEditor('rest-noche',event)">🌙 Rest. Noche</button>
+        <button class="esb-btn" onclick="switchEditor('barber-promos',event)">💈 Barber Paquetes</button>
+        <button class="esb-btn" onclick="switchEditor('barber-servicios',event)">✂️ Barber Servicios</button>
+        <button class="esb-btn" onclick="switchEditor('imagenes',event)">🖼️ Imágenes</button>
+        <button class="esb-btn" onclick="switchEditor('yape',event)">💜 Yape / Pago</button>
+      </div>
+      <div class="editor-main">
+
+        <!-- TEXTOS -->
+        <div class="editor-section active" id="sec-textos">
+          <div class="editor-section-title">Textos Generales</div>
+          <div class="editor-section-sub">Edita los textos principales que aparecen en la página.</div>
+          <div class="text-fields" id="textos-fields"><div class="loading"><div class="spin"></div>Cargando...</div></div>
+          <br>
+          <button class="save-btn" onclick="saveTextos()">💾 Guardar Cambios</button>
+        </div>
+
+        <!-- REST MAÑANA -->
+        <div class="editor-section" id="sec-rest-manana">
+          <div class="editor-section-title">Restaurante — Carta Mañana</div>
+          <div class="editor-section-sub">Añade, edita o elimina productos de la carta de mañana.</div>
+          <div class="add-form" id="form-rest-manana" style="display:none;">
+            <div class="add-form-title">➕ Nuevo Producto</div>
+            <div class="form-grid">
+              <div class="fg"><label class="flbl">Nombre</label><input class="finp" id="rm-name" placeholder="Ej: Ceviche Personal"></div>
+              <div class="fg"><label class="flbl">Precio (S/)</label><input class="finp" id="rm-price" type="number" placeholder="15"></div>
+              <div class="fg" style="grid-column:span 2"><label class="flbl">Descripción (opcional)</label><input class="finp" id="rm-desc" placeholder="Descripción breve"></div>
+              <div class="fg"><label class="flbl">Categoría</label>
+                <select class="finp" id="rm-cat">
+                  <option>Combos Marinos</option>
+                  <option>Platos Personales</option>
+                  <option>Platos a la Carta</option>
+                  <option>Ceviches</option>
+                  <option>Guarniciones</option>
+                  <option>Jugos y Bebidas</option>
+                </select>
+              </div>
+            </div>
+            <button class="save-btn teal" onclick="addProduct('rest-manana')">✅ Agregar</button>
+            <button class="cancel-btn" onclick="toggleAddForm('form-rest-manana')">Cancelar</button>
+          </div>
+          <button class="save-btn" onclick="toggleAddForm('form-rest-manana')" style="margin-bottom:16px;">➕ Añadir Producto</button>
+          <div class="product-list" id="list-rest-manana"><div class="loading"><div class="spin"></div>Cargando...</div></div>
+        </div>
+
+        <!-- REST NOCHE -->
+        <div class="editor-section" id="sec-rest-noche">
+          <div class="editor-section-title">Restaurante — Carta Noche</div>
+          <div class="editor-section-sub">Añade, edita o elimina productos de la carta de noche.</div>
+          <div class="add-form" id="form-rest-noche" style="display:none;">
+            <div class="add-form-title">➕ Nuevo Producto</div>
+            <div class="form-grid">
+              <div class="fg"><label class="flbl">Nombre</label><input class="finp" id="rn-name" placeholder="Nombre del producto"></div>
+              <div class="fg"><label class="flbl">Precio (S/)</label><input class="finp" id="rn-price" type="number" placeholder="18"></div>
+              <div class="fg" style="grid-column:span 2"><label class="flbl">Descripción (opcional)</label><input class="finp" id="rn-desc" placeholder="Descripción breve"></div>
+              <div class="fg"><label class="flbl">Categoría</label>
+                <select class="finp" id="rn-cat">
+                  <option>Alitas</option>
+                  <option>Promociones Noche</option>
+                  <option>Platos a la Carta Noche</option>
+                  <option>Bebidas Noche</option>
+                </select>
+              </div>
+            </div>
+            <button class="save-btn teal" onclick="addProduct('rest-noche')">✅ Agregar</button>
+            <button class="cancel-btn" onclick="toggleAddForm('form-rest-noche')">Cancelar</button>
+          </div>
+          <button class="save-btn" onclick="toggleAddForm('form-rest-noche')" style="margin-bottom:16px;">➕ Añadir Producto</button>
+          <div class="product-list" id="list-rest-noche"><div class="loading"><div class="spin"></div>Cargando...</div></div>
+        </div>
+
+        <!-- BARBER PROMOS -->
+        <div class="editor-section" id="sec-barber-promos">
+          <div class="editor-section-title">Barber — Paquetes Promocionales</div>
+          <div class="editor-section-sub">Edita los paquetes VIP, Premium, Estándar y Básico.</div>
+          <div class="add-form" id="form-barber-promos" style="display:none;">
+            <div class="add-form-title">➕ Nuevo Paquete</div>
+            <div class="form-grid">
+              <div class="fg"><label class="flbl">Nombre</label><input class="finp" id="bp-name" placeholder="Ej: Gold"></div>
+              <div class="fg"><label class="flbl">Precio (S/)</label><input class="finp" id="bp-price" type="number" placeholder="45"></div>
+              <div class="fg" style="grid-column:span 2"><label class="flbl">Incluye (separado por · )</label><input class="finp" id="bp-items" placeholder="Corte · Barba · Mascarilla · Cortesía"></div>
+            </div>
+            <button class="save-btn teal" onclick="addProduct('barber-promos')">✅ Agregar</button>
+            <button class="cancel-btn" onclick="toggleAddForm('form-barber-promos')">Cancelar</button>
+          </div>
+          <button class="save-btn" onclick="toggleAddForm('form-barber-promos')" style="margin-bottom:16px;">➕ Nuevo Paquete</button>
+          <div class="product-list" id="list-barber-promos"><div class="loading"><div class="spin"></div>Cargando...</div></div>
+        </div>
+
+        <!-- BARBER SERVICIOS -->
+        <div class="editor-section" id="sec-barber-servicios">
+          <div class="editor-section-title">Barber — Servicios Individuales</div>
+          <div class="editor-section-sub">Edita los servicios individuales de la barbería.</div>
+          <div class="add-form" id="form-barber-servicios" style="display:none;">
+            <div class="add-form-title">➕ Nuevo Servicio</div>
+            <div class="form-grid">
+              <div class="fg"><label class="flbl">Nombre</label><input class="finp" id="bs-name" placeholder="Ej: Pigmentación"></div>
+              <div class="fg"><label class="flbl">Precio (S/)</label><input class="finp" id="bs-price" type="number" placeholder="20"></div>
+            </div>
+            <button class="save-btn teal" onclick="addProduct('barber-servicios')">✅ Agregar</button>
+            <button class="cancel-btn" onclick="toggleAddForm('form-barber-servicios')">Cancelar</button>
+          </div>
+          <button class="save-btn" onclick="toggleAddForm('form-barber-servicios')" style="margin-bottom:16px;">➕ Nuevo Servicio</button>
+          <div class="product-list" id="list-barber-servicios"><div class="loading"><div class="spin"></div>Cargando...</div></div>
+        </div>
+
+        <!-- IMÁGENES -->
+        <div class="editor-section" id="sec-imagenes">
+          <div class="editor-section-title">Imágenes</div>
+          <div class="editor-section-sub">Sube imágenes. <strong style="color:var(--orange);">Requiere plan Blaze de Firebase.</strong> Por ahora puedes pegar URLs de imágenes directamente.</div>
+          <div class="img-grid">
+            <div class="img-card">
+              <span class="img-lbl">Foto del Fundador</span>
+              <div class="img-preview" id="prev-fundador">👤</div>
+              <input class="finp" id="url-fundador" placeholder="https://..." style="margin-bottom:8px;" oninput="previewUrl('fundador')">
+              <button class="img-upload-btn" onclick="saveImageUrl('fundador')">💾 Guardar URL</button>
+            </div>
+            <div class="img-card">
+              <span class="img-lbl">Foto Restaurante</span>
+              <div class="img-preview" id="prev-foto-rest">🍽️</div>
+              <input class="finp" id="url-foto-rest" placeholder="https://..." style="margin-bottom:8px;" oninput="previewUrl('foto-rest')">
+              <button class="img-upload-btn" onclick="saveImageUrl('foto-rest')">💾 Guardar URL</button>
+            </div>
+            <div class="img-card">
+              <span class="img-lbl">Foto Barber</span>
+              <div class="img-preview" id="prev-foto-barber">✂️</div>
+              <input class="finp" id="url-foto-barber" placeholder="https://..." style="margin-bottom:8px;" oninput="previewUrl('foto-barber')">
+              <button class="img-upload-btn" onclick="saveImageUrl('foto-barber')">💾 Guardar URL</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- YAPE / PAGO -->
+        <div class="editor-section" id="sec-yape">
+          <div class="editor-section-title">Yape — QR de Pago</div>
+          <div class="editor-section-sub">Sube o ingresa la URL del QR de Yape. Este QR se mostrará a los clientes cuando seleccionen pagar con Yape.</div>
+          <div class="yape-section">
+            <div>
+              <div class="yape-preview" id="prev-yape-qr">
+                <span style="font-size:2rem;">💜</span>
+                <span style="font-size:.75rem;font-weight:700;">QR aquí</span>
+              </div>
+            </div>
+            <div class="yape-info">
+              <div class="yape-title">💜 YAPE</div>
+              <div class="tf-group" style="margin-bottom:14px;">
+                <label class="tf-lbl">URL del QR de Yape</label>
+                <input class="tf-inp" id="yape-qr-url" placeholder="https://... (URL de la imagen del QR)">
+              </div>
+              <div class="tf-group" style="margin-bottom:14px;">
+                <label class="tf-lbl">Nombre en Yape</label>
+                <input class="tf-inp" id="yape-name" placeholder="Ej: Edinson Marino">
+              </div>
+              <div class="tf-group" style="margin-bottom:20px;">
+                <label class="tf-lbl">Número Yape</label>
+                <input class="tf-inp" id="yape-phone" placeholder="Ej: 970 736 968">
+              </div>
+              <button class="save-btn gold" onclick="saveYapeConfig()">💾 Guardar Configuración Yape</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       TAB: USUARIOS
+  ══════════════════════════════ -->
+  <div class="tab-panel" id="tab-usuarios" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:2px;">Gestión de Usuarios</div>
+        <div style="font-size:.75rem;color:var(--muted);">Solo el administrador puede crear y eliminar usuarios</div>
+      </div>
+      <button class="save-btn gold" onclick="document.getElementById('modal-add-user').style.display='flex'">➕ Nuevo Usuario</button>
+    </div>
+    <div class="users-grid" id="users-grid">
+      <div class="loading"><div class="spin"></div>Cargando usuarios...</div>
+    </div>
+  </div>
+
+</div><!-- end dashboard -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL: EDITAR PRODUCTO -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Editar Producto</div>
+    <input type="hidden" id="edit-id">
+    <input type="hidden" id="edit-section">
+    <div class="tf-group" style="margin-bottom:12px;"><label class="tf-lbl">Nombre</label><input class="tf-inp" id="edit-name"></div>
+    <div class="tf-group" style="margin-bottom:12px;"><label class="tf-lbl">Precio (S/)</label><input class="tf-inp" type="number" id="edit-price"></div>
+    <div class="tf-group" style="margin-bottom:12px;"><label class="tf-lbl">Descripción</label><input class="tf-inp" id="edit-desc"></div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeModal('edit-modal')">Cancelar</button>
+      <button class="save-btn teal" onclick="saveEdit()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NUEVO USUARIO -->
+<div class="modal-overlay" id="modal-add-user">
+  <div class="modal-box">
+    <div class="modal-title">👤 Nuevo Usuario</div>
+    <div class="tf-group" style="margin-bottom:12px;"><label class="tf-lbl">Nombre completo</label><input class="tf-inp" id="nu-name" placeholder="Ej: Carlos Díaz"></div>
+    <div class="tf-group" style="margin-bottom:12px;"><label class="tf-lbl">Usuario</label><input class="tf-inp" id="nu-user" placeholder="Ej: carlos"></div>
+    <div class="tf-group" style="margin-bottom:12px;"><label class="tf-lbl">Contraseña</label><input class="tf-inp" type="password" id="nu-pass" placeholder="Mínimo 6 caracteres"></div>
+    <div class="tf-group" style="margin-bottom:16px;"><label class="tf-lbl">Rol</label>
+      <select class="tf-inp" id="nu-role">
+        <option value="worker">Trabajador (Solo ver ventas y pedidos)</option>
+        <option value="admin">Administrador (Acceso total)</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeModal('modal-add-user')">Cancelar</button>
+      <button class="save-btn gold" onclick="addUser()">✅ Crear Usuario</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NUEVO PEDIDO MANUAL -->
+<div class="modal-overlay" id="modal-nuevo-pedido">
+  <div class="modal-box" style="max-width:520px;">
+    <div class="modal-title">➕ Nuevo Pedido Manual</div>
+    <div class="form-grid">
+      <div class="fg"><label class="flbl">Nombre del cliente</label><input class="finp" id="np-name" placeholder="Ej: Mesa 3"></div>
+      <div class="fg"><label class="flbl">Tipo</label>
+        <select class="finp" id="np-type">
+          <option value="mesa">Mesa</option>
+          <option value="delivery">🛵 Delivery</option>
+          <option value="llevar">Para llevar</option>
+        </select>
+      </div>
+      <div class="fg" id="np-mesa-row"><label class="flbl">Número de Mesa</label>
+        <select class="finp" id="np-mesa"></select>
+      </div>
+      <div class="fg" id="np-dir-row" style="display:none"><label class="flbl">Dirección delivery</label><input class="finp" id="np-dir" placeholder="Calle, referencia"></div>
+    </div>
+    <div class="fg" style="margin-bottom:12px;margin-top:4px;"><label class="flbl">Detalle del pedido</label><textarea class="finp" id="np-items" rows="3" placeholder="Ej: 2x Ceviche, 1x Arroz con Leche"></textarea></div>
+    <div class="fg" style="margin-bottom:12px;"><label class="flbl">Total (S/)</label><input class="finp" type="number" id="np-total" placeholder="25"></div>
+    <div class="fg" style="margin-bottom:16px;"><label class="flbl">Método de pago</label>
+      <select class="finp" id="np-pago">
+        <option value="efectivo">Efectivo</option>
+        <option value="yape">💜 Yape</option>
+        <option value="pendiente">Pendiente</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeModal('modal-nuevo-pedido')">Cancelar</button>
+      <button class="save-btn teal" onclick="saveNuevoPedido()">✅ Crear Pedido</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DETALLE MESA -->
+<div class="modal-overlay" id="modal-mesa">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-mesa-title">Mesa 1</div>
+    <div id="modal-mesa-content"></div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeModal('modal-mesa')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, addDoc, deleteDoc, updateDoc, collection, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDrZx8FNu2wPpc01nCx6XCf7brackxnYuM",
+  authDomain: "marino-chiclayo.firebaseapp.com",
+  projectId: "marino-chiclayo",
+  storageBucket: "marino-chiclayo.firebasestorage.app",
+  messagingSenderId: "637873320955",
+  appId: "1:637873320955:web:e5ab4d1ce1e259443e515e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let currentUser = null;
+let allLiveOrders = [];
+let currentOrderFilter = 'todos';
+let currentPeriod = 'dia';
+let barChart = null, pieChart = null;
+let mesasData = [];
+
+// ══════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════
+const DEFAULT_ADMIN = { user: 'edinson', pass: 'marino2025', name: 'Edinson Marino', role: 'admin' };
+
+window.doLogin = async function() {
+  const u = document.getElementById('lu').value.trim().toLowerCase();
+  const p = document.getElementById('lp').value;
+
+  // Check default admin first
+  if (u === DEFAULT_ADMIN.user && p === DEFAULT_ADMIN.pass) {
+    currentUser = DEFAULT_ADMIN;
+    showDashboard();
+    return;
+  }
+
+  // Check Firebase users
+  try {
+    const snap = await getDocs(collection(db, 'usuarios'));
+    let found = false;
+    snap.forEach(d => {
+      const data = d.data();
+      if (data.user === u && data.pass === p) {
+        currentUser = { ...data, id: d.id };
+        found = true;
+      }
+    });
+    if (found) { showDashboard(); return; }
+  } catch(e) {}
+
+  document.getElementById('lerr').style.display = 'block';
+};
+
+function showDashboard() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('topbar-user').textContent = (currentUser.name || currentUser.user).toUpperCase();
+  // Hide usuarios tab for non-admin
+  if (currentUser.role !== 'admin') {
+    document.getElementById('tab-usuarios-btn').style.display = 'none';
+  }
+  initApp();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') window.doLogin();
+});
+
+window.doLogout = function() {
+  currentUser = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('lu').value = '';
+  document.getElementById('lp').value = '';
+};
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+function initApp() {
+  listenLiveOrders();
+  listenMesas();
+  setPeriod('dia');
+  setInterval(() => renderVentas(currentPeriod), 30000);
+}
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+window.switchTab = function(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+
+  const tabEl = document.getElementById('tab-' + tab);
+  tabEl.style.display = 'block';
+  tabEl.classList.add('active');
+
+  // activate the clicked tab button
+  document.querySelectorAll('.tab').forEach(t => {
+    if (t.getAttribute('onclick') === `switchTab('${tab}')`) t.classList.add('active');
+  });
+
+  if (tab === 'editor') loadAllEditorData();
+  if (tab === 'usuarios') loadUsers();
+  if (tab === 'ventas') renderVentas(currentPeriod);
+};
+
+// ══════════════════════════════════════════
+// PEDIDOS EN VIVO (Firestore real-time)
+// ══════════════════════════════════════════
+function listenLiveOrders() {
+  onSnapshot(collection(db, 'pedidos_live'), snap => {
+    allLiveOrders = [];
+    snap.forEach(d => allLiveOrders.push({ id: d.id, ...d.data() }));
+    allLiveOrders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    renderLiveOrders();
+  });
+}
+
+window.filterOrders = function(filter) {
+  currentOrderFilter = filter;
+  document.querySelectorAll('.sfbtn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sf-' + filter).classList.add('active');
+  renderLiveOrders();
+};
+
+function renderLiveOrders() {
+  const grid = document.getElementById('orders-live-grid');
+  let orders = allLiveOrders;
+
+  if (currentOrderFilter === 'delivery') {
+    orders = orders.filter(o => o.type === 'delivery');
+  } else if (currentOrderFilter !== 'todos') {
+    orders = orders.filter(o => o.status === currentOrderFilter);
+  }
+
+  // Also show WhatsApp orders from localStorage
+  const waOrders = loadLocalOrders().filter(o => {
+    const d = new Date(o.date);
+    const now = new Date();
+    return d.toDateString() === now.toDateString();
+  });
+
+  if (!orders.length && !waOrders.length) {
+    grid.innerHTML = '<div class="no-data"><div class="ndi">📋</div><p>No hay pedidos en este estado.</p></div>';
+    return;
+  }
+
+  let html = orders.map(o => buildOrderCard(o)).join('');
+
+  // Show WhatsApp orders as reference
+  if (currentOrderFilter === 'todos' && waOrders.length) {
+    html += `<div style="grid-column:1/-1;font-size:.65rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding:12px 0 4px;border-top:1px solid var(--border);margin-top:4px;">📱 Pedidos por WhatsApp (hoy)</div>`;
+    html += waOrders.map(o => buildWAOrderCard(o)).join('');
+  }
+
+  grid.innerHTML = html || '<div class="no-data"><div class="ndi">📋</div><p>No hay pedidos.</p></div>';
+}
+
+function buildOrderCard(o) {
+  const statusLabel = { proceso: '🟠 En Proceso', pagado: '🟢 Pagado', entrega: '🔵 En Entrega', entregado: '✅ Entregado' };
+  const time = o.createdAt ? new Date(o.createdAt).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }) : '';
+  const typeLabel = o.type === 'delivery' ? '🛵 Delivery' : o.type === 'llevar' ? '🥡 Para llevar' : `🪑 Mesa ${o.mesa || '?'}`;
+  const pagoLabel = o.pago === 'yape' ? '💜 Yape' : o.pago === 'efectivo' ? '💵 Efectivo' : '⏳ Pendiente';
+
+  let actions = '';
+  if (o.status === 'proceso') actions = `<button class="oc-btn pagar" onclick="updateOrderStatus('${o.id}','pagado')">💳 Marcar Pagado</button>`;
+  else if (o.status === 'pagado') actions = `<button class="oc-btn entregar" onclick="updateOrderStatus('${o.id}','entrega')">🛵 En Camino</button>`;
+  else if (o.status === 'entrega') actions = `<button class="oc-btn completar" onclick="updateOrderStatus('${o.id}','entregado')">✅ Entregado</button>`;
+  actions += `<button class="oc-btn eliminar" onclick="deleteOrder('${o.id}')">🗑️</button>`;
+
+  return `
+    <div class="order-card ${o.status || 'proceso'}">
+      <div class="oc-header">
+        <div>
+          <div class="oc-id">#${(o.id || '').slice(-4).toUpperCase()}</div>
+          <div class="oc-time">${time}</div>
+        </div>
+        <span class="tag ${o.status || 'proceso'}">${statusLabel[o.status] || '🟠 En Proceso'}</span>
+      </div>
+      <div class="oc-name">${o.customer || 'Cliente'}</div>
+      <div class="oc-type">${typeLabel} · ${pagoLabel}</div>
+      ${o.address ? `<div style="font-size:.75rem;color:var(--muted);margin-bottom:4px;">📍 ${o.address}</div>` : ''}
+      <div class="oc-items">${(o.items || '').split('\n').map(i => `<div class="oc-item">· ${i}</div>`).join('')}</div>
+      <div class="oc-total">S/${parseFloat(o.total || 0).toFixed(2)}</div>
+      <div class="oc-actions">${actions}</div>
+    </div>`;
+}
+
+function buildWAOrderCard(o) {
+  const svcLabel = { restaurante: '🍽️ Rest.', barber_sauces: '✂️ Sauces', barber_pradera: '✂️ Pradera' };
+  const items = (o.items || []).map(i => `${i.qty || 1}x ${i.name}`).join('\n');
+  return `
+    <div class="order-card proceso" style="opacity:.8;border-style:dashed;">
+      <div class="oc-header">
+        <div class="oc-id">WA #${String(o.id).slice(-4)}</div>
+        <span class="tag r">${svcLabel[o.service] || o.service}</span>
+      </div>
+      <div class="oc-name">${o.customer?.name || 'Cliente'}</div>
+      <div class="oc-type">📱 WhatsApp · ${o.customer?.address || o.customer?.fecha || ''}</div>
+      <div class="oc-items">${(o.items || []).map(i => `<div class="oc-item">· ${i.qty || 1}x ${i.name}</div>`).join('')}</div>
+      <div class="oc-total">S/${parseFloat(o.total || 0).toFixed(2)}</div>
+    </div>`;
+}
+
+window.updateOrderStatus = async function(id, status) {
+  try {
+    await updateDoc(doc(db, 'pedidos_live', id), { status });
+    showToast('✅ Estado actualizado.');
+  } catch(e) { showToast('❌ ' + e.message, true); }
+};
+
+window.deleteOrder = async function(id) {
+  if (!confirm('¿Eliminar este pedido?')) return;
+  try {
+    await deleteDoc(doc(db, 'pedidos_live', id));
+    showToast('🗑️ Pedido eliminado.');
+  } catch(e) { showToast('❌ ' + e.message, true); }
+};
+
+// ══════════════════════════════════════════
+// NUEVO PEDIDO MANUAL
+// ══════════════════════════════════════════
+window.openNuevoPedido = function() {
+  // Populate mesas select
+  const sel = document.getElementById('np-mesa');
+  sel.innerHTML = mesasData.map(m => `<option value="${m.num}">Mesa ${m.num}</option>`).join('');
+  document.getElementById('modal-nuevo-pedido').style.display = 'flex';
+};
+
+document.getElementById('np-type').addEventListener('change', function() {
+  document.getElementById('np-mesa-row').style.display = this.value === 'mesa' ? '' : 'none';
+  document.getElementById('np-dir-row').style.display = this.value === 'delivery' ? '' : 'none';
+});
+
+window.saveNuevoPedido = async function() {
+  const type = document.getElementById('np-type').value;
+  const data = {
+    customer: document.getElementById('np-name').value.trim() || 'Cliente',
+    type,
+    mesa: type === 'mesa' ? document.getElementById('np-mesa').value : null,
+    address: type === 'delivery' ? document.getElementById('np-dir').value.trim() : null,
+    items: document.getElementById('np-items').value.trim(),
+    total: parseFloat(document.getElementById('np-total').value) || 0,
+    pago: document.getElementById('np-pago').value,
+    status: 'proceso',
+    createdAt: Date.now(),
+    source: 'manual'
+  };
+  if (type === 'mesa' && data.mesa) {
+    // Mark mesa as occupied
+    const m = mesasData.find(x => String(x.num) === String(data.mesa));
+    if (m) await updateDoc(doc(db, 'mesas', m.id), { status: 'ocupada' });
+  }
+  try {
+    await addDoc(collection(db, 'pedidos_live'), data);
+    // Also save to ventas history
+    saveToVentas(data);
+    closeModal('modal-nuevo-pedido');
+    showToast('✅ Pedido creado.');
+  } catch(e) { showToast('❌ ' + e.message, true); }
+};
+
+async function saveToVentas(data) {
+  try {
+    const now = new Date();
+    await addDoc(collection(db, 'ventas'), {
+      ...data,
+      date: now.toISOString(),
+      day: now.toLocaleDateString('es-PE'),
+      month: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,
+      year: String(now.getFullYear()),
+      service: 'restaurante'
+    });
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════
+// MESAS
+// ══════════════════════════════════════════
+async function listenMesas() {
+  onSnapshot(collection(db, 'mesas'), snap => {
+    mesasData = [];
+    snap.forEach(d => mesasData.push({ id: d.id, ...d.data() }));
+    mesasData.sort((a, b) => (a.num || 0) - (b.num || 0));
+    if (!mesasData.length) initDefaultMesas();
+    else renderMesas();
+  });
+}
+
+async function initDefaultMesas() {
+  // Create 10 default mesas
+  for (let i = 1; i <= 10; i++) {
+    await addDoc(collection(db, 'mesas'), { num: i, status: 'libre' });
+  }
+}
+
+function renderMesas() {
+  document.getElementById('mesas-grid').innerHTML = mesasData.map(m => `
+    <div class="mesa-card ${m.status || 'libre'}" onclick="showMesaDetail('${m.id}',${m.num})">
+      <div class="mesa-num">${m.num}</div>
+      <div class="mesa-status">${m.status === 'ocupada' ? 'Ocupada' : 'Libre'}</div>
+      <button onclick="event.stopPropagation();toggleMesa('${m.id}','${m.status}')" style="margin-top:8px;padding:4px 10px;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:none;border:1px solid rgba(255,255,255,.1);color:var(--muted);cursor:pointer;width:100%;">
+        ${m.status === 'ocupada' ? 'Liberar' : 'Ocupar'}
+      </button>
+    </div>`).join('');
+}
+
+window.toggleMesa = async function(id, status) {
+  const newStatus = status === 'ocupada' ? 'libre' : 'ocupada';
+  try { await updateDoc(doc(db, 'mesas', id), { status: newStatus }); } catch(e) {}
+};
+
+window.addMesa = async function() {
+  const nextNum = mesasData.length > 0 ? Math.max(...mesasData.map(m => m.num || 0)) + 1 : 1;
+  try {
+    await addDoc(collection(db, 'mesas'), { num: nextNum, status: 'libre' });
+    showToast(`✅ Mesa ${nextNum} añadida.`);
+  } catch(e) { showToast('❌ ' + e.message, true); }
+};
+
+window.showMesaDetail = function(id, num) {
+  document.getElementById('modal-mesa-title').textContent = `Mesa ${num}`;
+  const orders = allLiveOrders.filter(o => o.mesa == num && o.status !== 'entregado');
+  const mesa = mesasData.find(m => m.id === id);
+  let html = `<div style="margin-bottom:12px;">
+    <span class="tag ${mesa?.status === 'ocupada' ? 'proceso' : 'pagado'}">${mesa?.status === 'ocupada' ? '🔴 Ocupada' : '🟢 Libre'}</span>
+  </div>`;
+  if (orders.length) {
+    html += `<div style="font-size:.75rem;color:var(--muted);margin-bottom:8px;font-weight:700;">PEDIDOS ACTIVOS:</div>`;
+    orders.forEach(o => {
+      html += `<div style="padding:10px;background:rgba(255,255,255,.02);border:1px solid var(--border);margin-bottom:8px;font-size:.82rem;">
+        <strong>${o.customer}</strong> · S/${o.total}<br>
+        <span style="color:var(--muted);font-size:.72rem;">${o.items}</span>
+      </div>`;
+    });
+  } else {
+    html += `<p style="color:var(--muted);font-size:.82rem;">Sin pedidos activos en esta mesa.</p>`;
+  }
+  document.getElementById('modal-mesa-content').innerHTML = html;
+  document.getElementById('modal-mesa').style.display = 'flex';
+};
+
+// ══════════════════════════════════════════
+// VENTAS / DASHBOARD
+// ══════════════════════════════════════════
+window.setPeriod = function(p) {
+  currentPeriod = p;
+  document.querySelectorAll('.pbtn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('pbtn-' + p);
+  if (btn) btn.classList.add('active');
+  const labels = { dia:'Hoy', semana:'Esta Semana', mes:'Este Mes', year:'Este Año', todo:'Todo' };
+  const lbl = document.getElementById('kpi-plbl');
+  const clbl = document.getElementById('chart-lbl');
+  if (lbl) lbl.textContent = labels[p];
+  if (clbl) clbl.textContent = '— ' + labels[p];
+  renderVentas(p);
+};
+
+function renderVentas(period) {
+  const orders = filterVentas(loadLocalOrders(), period);
+  const total  = orders.reduce((s,o) => s+(o.total||0), 0);
+  const cnt    = orders.length;
+  const avg    = cnt > 0 ? total/cnt : 0;
+
+  const el = id => document.getElementById(id);
+  if (el('kpi-total')) el('kpi-total').textContent = `S/${total.toFixed(2)}`;
+  if (el('kpi-cnt'))   el('kpi-cnt').textContent   = cnt;
+  if (el('kpi-avg'))   el('kpi-avg').textContent   = `S/${avg.toFixed(2)}`;
+
+  const bySvc = {};
+  orders.forEach(o => { if(!bySvc[o.service]) bySvc[o.service]={total:0,count:0}; bySvc[o.service].total+=o.total||0; bySvc[o.service].count++; });
+
+  let top='—', topV=0;
+  Object.entries(bySvc).forEach(([s,d]) => { if(d.total>topV){topV=d.total;top=({restaurante:'Restaurante',barber_sauces:'Barber Sauces',barber_pradera:'Barber Pradera'}[s]||s);} });
+  if (el('kpi-top')) el('kpi-top').textContent = top;
+
+  const r=bySvc['restaurante']||{total:0,count:0};
+  const s=bySvc['barber_sauces']||{total:0,count:0};
+  const p=bySvc['barber_pradera']||{total:0,count:0};
+  if (el('bk-rest'))     el('bk-rest').textContent     = `S/${r.total.toFixed(2)}`;
+  if (el('bk-rest-n'))   el('bk-rest-n').textContent   = `${r.count} pedido${r.count!==1?'s':''}`;
+  if (el('bk-sauces'))   el('bk-sauces').textContent   = `S/${s.total.toFixed(2)}`;
+  if (el('bk-sauces-n')) el('bk-sauces-n').textContent = `${s.count} cita${s.count!==1?'s':''}`;
+  if (el('bk-pradera'))  el('bk-pradera').textContent  = `S/${p.total.toFixed(2)}`;
+  if (el('bk-pradera-n'))el('bk-pradera-n').textContent= `${p.count} cita${p.count!==1?'s':''}`;
+
+  renderBarChart(orders, period);
+  renderPieChart(r,s,p);
+  renderTable(orders);
+}
+
+function filterVentas(orders, period) {
+  const now = new Date();
+  return orders.filter(o => {
+    const d = new Date(o.date);
+    if (period==='dia')    return d.toDateString()===now.toDateString();
+    if (period==='semana') { const sw=new Date(now); sw.setDate(now.getDate()-now.getDay()); sw.setHours(0,0,0,0); return d>=sw; }
+    if (period==='mes')    return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    if (period==='year')   return d.getFullYear()===now.getFullYear();
+    return true;
+  });
+}
+
+function loadLocalOrders() {
+  try { return JSON.parse(localStorage.getItem('marino_orders')||'[]'); } catch { return []; }
+}
+
+function renderBarChart(orders, period) {
+  const ctx = document.getElementById('chart-bar');
+  if (!ctx) return;
+  if (barChart) barChart.destroy();
+  let labels=[], rd=[], sd=[], pd=[];
+  if(period==='dia'){
+    labels=Array.from({length:18},(_,i)=>`${String(i+6).padStart(2,'0')}h`);
+    rd=new Array(18).fill(0);sd=new Array(18).fill(0);pd=new Array(18).fill(0);
+    orders.forEach(o=>{const h=new Date(o.date).getHours()-6;if(h>=0&&h<18){if(o.service==='restaurante')rd[h]+=o.total||0;if(o.service==='barber_sauces')sd[h]+=o.total||0;if(o.service==='barber_pradera')pd[h]+=o.total||0;}});
+  } else if(period==='semana'){
+    labels=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    rd=new Array(7).fill(0);sd=new Array(7).fill(0);pd=new Array(7).fill(0);
+    orders.forEach(o=>{const d=new Date(o.date).getDay();if(o.service==='restaurante')rd[d]+=o.total||0;if(o.service==='barber_sauces')sd[d]+=o.total||0;if(o.service==='barber_pradera')pd[d]+=o.total||0;});
+  } else if(period==='mes'){
+    const dm=new Date(new Date().getFullYear(),new Date().getMonth()+1,0).getDate();
+    labels=Array.from({length:dm},(_,i)=>String(i+1));
+    rd=new Array(dm).fill(0);sd=new Array(dm).fill(0);pd=new Array(dm).fill(0);
+    orders.forEach(o=>{const d=new Date(o.date).getDate()-1;if(o.service==='restaurante')rd[d]+=o.total||0;if(o.service==='barber_sauces')sd[d]+=o.total||0;if(o.service==='barber_pradera')pd[d]+=o.total||0;});
+  } else {
+    labels=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    rd=new Array(12).fill(0);sd=new Array(12).fill(0);pd=new Array(12).fill(0);
+    orders.forEach(o=>{const m=new Date(o.date).getMonth();if(o.service==='restaurante')rd[m]+=o.total||0;if(o.service==='barber_sauces')sd[m]+=o.total||0;if(o.service==='barber_pradera')pd[m]+=o.total||0;});
+  }
+  barChart=new Chart(ctx,{type:'bar',data:{labels,datasets:[
+    {label:'Restaurante',data:rd,backgroundColor:'rgba(180,80,255,.7)',borderColor:'#b050ff',borderWidth:1},
+    {label:'Barber Sauces',data:sd,backgroundColor:'rgba(0,204,122,.65)',borderColor:'#00cc7a',borderWidth:1},
+    {label:'Barber Pradera',data:pd,backgroundColor:'rgba(77,184,255,.65)',borderColor:'#4db8ff',borderWidth:1}
+  ]},options:{responsive:true,plugins:{legend:{labels:{color:'#6870a0',font:{size:11}}},tooltip:{callbacks:{label:c=>` S/${c.parsed.y.toFixed(2)}`}}},scales:{x:{ticks:{color:'#6870a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#6870a0',font:{size:10},callback:v=>`S/${v}`},grid:{color:'rgba(255,255,255,.04)'}}}}});
+}
+
+function renderPieChart(r,s,p) {
+  const ctx = document.getElementById('chart-pie');
+  if (!ctx) return;
+  if (pieChart) pieChart.destroy();
+  const hasData=r.total>0||s.total>0||p.total>0;
+  pieChart=new Chart(ctx,{type:'doughnut',data:{labels:['Restaurante','Barber Sauces','Barber Pradera'],datasets:[{data:hasData?[r.total,s.total,p.total]:[1,1,1],backgroundColor:hasData?['rgba(180,80,255,.8)','rgba(0,204,122,.8)','rgba(77,184,255,.8)']:['rgba(255,255,255,.05)','rgba(255,255,255,.05)','rgba(255,255,255,.05)'],borderColor:hasData?['#b050ff','#00cc7a','#4db8ff']:'transparent',borderWidth:2}]},options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:'#6870a0',font:{size:11},padding:14}}}}});
+}
+
+function renderTable(orders) {
+  const wrap = document.getElementById('orders-wrap');
+  if (!wrap) return;
+  if (!orders.length) { wrap.innerHTML='<div class="no-data"><div class="ndi">📊</div><p>No hay pedidos en este período.</p></div>'; return; }
+  const sorted=[...orders].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,50);
+  const tc={restaurante:'r',barber_sauces:'s',barber_pradera:'p'};
+  const tn={restaurante:'Restaurante',barber_sauces:'Barber Sauces',barber_pradera:'Barber Pradera'};
+  wrap.innerHTML=`<table class="orders-tbl"><thead><tr><th>Fecha</th><th>Servicio</th><th>Cliente</th><th>Items</th><th>Total</th></tr></thead><tbody>${sorted.map(o=>{const d=new Date(o.date);const ds=`${d.toLocaleDateString('es-PE')} ${d.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}`;const items=(o.items||[]).map(i=>`${i.qty||1}x ${i.name}`).join(', ');return`<tr><td style="color:var(--muted);font-size:.76rem;">${ds}</td><td><span class="tag ${tc[o.service]||'r'}">${tn[o.service]||o.service}</span></td><td>${o.customer?.name||o.customer||'—'}</td><td style="font-size:.76rem;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${items||'—'}</td><td><span class="price-cell">S/${(o.total||0).toFixed(2)}</span></td></tr>`;}).join('')}</tbody></table>`;
+}
+
+// ══════════════════════════════════════════
+// EDITOR
+// ══════════════════════════════════════════
+window.switchEditor = function(sec, evt) {
+  document.querySelectorAll('.esb-btn').forEach(b => b.classList.remove('active'));
+  if (evt) evt.target.classList.add('active');
+  document.querySelectorAll('.editor-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + sec).classList.add('active');
+};
+
+window.toggleAddForm = function(id) {
+  const f = document.getElementById(id);
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+};
+
+async function loadAllEditorData() {
+  loadTextos();
+  loadProductList('rest-manana');
+  loadProductList('rest-noche');
+  loadProductList('barber-promos');
+  loadProductList('barber-servicios');
+  loadImagesData();
+  loadYapeConfig();
+}
+
+// TEXTOS
+const defaultTextos = {
+  hero_tagline: 'UNA VISIÓN, UN NOMBRE, UN LEGADO, DOS MUNDOS.',
+  hero_desc: 'Dos experiencias únicas bajo una misma identidad. Diseñadas para la nueva generación que exige calidad en todo lo que hace.',
+  why_title: '¿Por qué MARINO?',
+  why_p1: 'Marino nació del sueño de un joven emprendedor chiclayano con una visión clara: crear espacios de calidad para la nueva generación.',
+  why_p2: 'Un nombre que evoca fuerza, fluidez y carácter. Dos mundos — gastronomía y estilo — bajo una misma identidad.',
+  rest_desc: 'Ceviche, alitas, combos y más. Carta de mañana y noche. Delivery gratis a Sauces, Garita y Ensenada.',
+  barber_desc: 'Barbería para hombres de alto valor. Dos sucursales: Los Sauces y La Pradera. Reserva tu cita ahora.',
+  rest_address: 'Urb. Los Sauces Calle 11 Mz K Lote 4',
+  rest_phone: '990 854 675',
+  barber_phone: '970 736 968',
+};
+
+async function loadTextos() {
+  try {
+    const snap = await getDoc(doc(db,'config','textos'));
+    const data = snap.exists() ? {...defaultTextos,...snap.data()} : defaultTextos;
+    renderTextosForm(data);
+  } catch(e) { renderTextosForm(defaultTextos); }
+}
+
+function renderTextosForm(data) {
+  const fields = [
+    {key:'hero_tagline',label:'Frase Principal (Hero)'},
+    {key:'hero_desc',label:'Descripción Hero',textarea:true},
+    {key:'why_title',label:'Título "¿Por qué Marino?"'},
+    {key:'why_p1',label:'Párrafo 1 — Por qué Marino',textarea:true},
+    {key:'why_p2',label:'Párrafo 2 — Por qué Marino',textarea:true},
+    {key:'rest_desc',label:'Descripción Restaurante',textarea:true},
+    {key:'barber_desc',label:'Descripción Barber',textarea:true},
+    {key:'rest_address',label:'Dirección Restaurante'},
+    {key:'rest_phone',label:'Teléfono Restaurante'},
+    {key:'barber_phone',label:'Teléfono Barber'},
+  ];
+  document.getElementById('textos-fields').innerHTML = fields.map(f=>`
+    <div class="tf-group">
+      <label class="tf-lbl">${f.label}</label>
+      ${f.textarea?`<textarea class="tf-inp" id="tf-${f.key}" rows="3">${data[f.key]||''}</textarea>`:`<input class="tf-inp" id="tf-${f.key}" value="${(data[f.key]||'').replace(/"/g,'&quot;')}">`}
+    </div>`).join('');
+}
+
+window.saveTextos = async function() {
+  const keys = ['hero_tagline','hero_desc','why_title','why_p1','why_p2','rest_desc','barber_desc','rest_address','rest_phone','barber_phone'];
+  const data = {};
+  keys.forEach(k => { const el=document.getElementById('tf-'+k); if(el)data[k]=el.value; });
+  try {
+    await setDoc(doc(db,'config','textos'), data);
+    showToast('✅ Textos guardados.');
+  } catch(e) { showToast('❌ '+e.message,true); }
+};
+
+// PRODUCTS
+const collectionMap = {
+  'rest-manana':'productos_rest_manana',
+  'rest-noche':'productos_rest_noche',
+  'barber-promos':'barber_promos',
+  'barber-servicios':'barber_servicios',
+};
+
+function loadProductList(section) {
+  const listEl = document.getElementById('list-'+section);
+  onSnapshot(collection(db, collectionMap[section]), snap => {
+    const items = [];
+    snap.forEach(d => items.push({id:d.id,...d.data()}));
+    items.sort((a,b)=>(a.order||0)-(b.order||0));
+    renderProductList(listEl, items, section);
+  });
+}
+
+function renderProductList(el, items, section) {
+  if (!items.length) { el.innerHTML='<div class="no-data"><div class="ndi">📋</div><p>No hay productos. Añade el primero.</p></div>'; return; }
+  el.innerHTML = items.map(item=>`
+    <div class="product-row">
+      <div style="flex:1">
+        <div class="pr-name">${item.name}</div>
+        ${item.desc?`<div class="pr-desc">${item.desc}</div>`:''}
+        ${item.category?`<div class="pr-desc" style="color:var(--purple-l);font-size:.68rem;letter-spacing:1px;text-transform:uppercase;">${item.category}</div>`:''}
+        ${item.items?`<div class="pr-desc">${item.items}</div>`:''}
+      </div>
+      <div class="pr-price">S/${parseFloat(item.price||0).toFixed(2)}</div>
+      <div class="pr-actions">
+        <button class="pr-btn edit" onclick="openEditModal('${item.id}','${section}','${escStr(item.name)}',${item.price},'${escStr(item.desc||'')}')">✏️</button>
+        <button class="pr-btn del"  onclick="deleteProduct('${item.id}','${section}')">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function escStr(s){ return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+window.addProduct = async function(section) {
+  const col = collectionMap[section];
+  let data = {};
+  if (section==='rest-manana')     data={name:document.getElementById('rm-name').value.trim(),price:parseFloat(document.getElementById('rm-price').value)||0,desc:document.getElementById('rm-desc').value.trim(),category:document.getElementById('rm-cat').value,order:Date.now()};
+  else if (section==='rest-noche') data={name:document.getElementById('rn-name').value.trim(),price:parseFloat(document.getElementById('rn-price').value)||0,desc:document.getElementById('rn-desc').value.trim(),category:document.getElementById('rn-cat').value,order:Date.now()};
+  else if (section==='barber-promos')   data={name:document.getElementById('bp-name').value.trim(),price:parseFloat(document.getElementById('bp-price').value)||0,items:document.getElementById('bp-items').value.trim(),order:Date.now()};
+  else if (section==='barber-servicios') data={name:document.getElementById('bs-name').value.trim(),price:parseFloat(document.getElementById('bs-price').value)||0,order:Date.now()};
+  if (!data.name){showToast('❌ El nombre es obligatorio.',true);return;}
+  try {
+    await addDoc(collection(db,col), data);
+    toggleAddForm('form-'+section);
+    showToast('✅ Producto añadido.');
+    ['rm-name','rm-price','rm-desc','rn-name','rn-price','rn-desc','bp-name','bp-price','bp-items','bs-name','bs-price'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  } catch(e){showToast('❌ '+e.message,true);}
+};
+
+window.deleteProduct = async function(id, section) {
+  if (!confirm('¿Eliminar este producto?')) return;
+  try { await deleteDoc(doc(db,collectionMap[section],id)); showToast('🗑️ Eliminado.'); }
+  catch(e){showToast('❌ '+e.message,true);}
+};
+
+window.openEditModal = function(id,section,name,price,desc) {
+  document.getElementById('edit-id').value=id;
+  document.getElementById('edit-section').value=section;
+  document.getElementById('edit-name').value=name;
+  document.getElementById('edit-price').value=price;
+  document.getElementById('edit-desc').value=desc;
+  document.getElementById('edit-modal').style.display='flex';
+};
+
+window.saveEdit = async function() {
+  const id=document.getElementById('edit-id').value;
+  const section=document.getElementById('edit-section').value;
+  const name=document.getElementById('edit-name').value.trim();
+  const price=parseFloat(document.getElementById('edit-price').value)||0;
+  const desc=document.getElementById('edit-desc').value.trim();
+  if(!name){showToast('❌ El nombre es obligatorio.',true);return;}
+  try {
+    await updateDoc(doc(db,collectionMap[section],id),{name,price,desc});
+    closeModal('edit-modal');
+    showToast('✅ Actualizado.');
+  } catch(e){showToast('❌ '+e.message,true);}
+};
+
+// IMAGES (URL based - no Storage needed)
+async function loadImagesData() {
+  try {
+    const snap = await getDoc(doc(db,'config','imagenes'));
+    if (snap.exists()) {
+      const d = snap.data();
+      ['fundador','foto-rest','foto-barber'].forEach(key => {
+        const url = d[key];
+        if (url) {
+          const prev = document.getElementById('prev-'+key);
+          if (prev) prev.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+          const inp = document.getElementById('url-'+key);
+          if (inp) inp.value = url;
+        }
+      });
+    }
+  } catch(e){}
+}
+
+window.previewUrl = function(key) {
+  const url = document.getElementById('url-'+key).value;
+  const prev = document.getElementById('prev-'+key);
+  if (url && prev) prev.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.innerHTML='❌'">`;
+};
+
+window.saveImageUrl = async function(key) {
+  const url = document.getElementById('url-'+key).value.trim();
+  if (!url){showToast('❌ Ingresa una URL.',true);return;}
+  try {
+    const snap = await getDoc(doc(db,'config','imagenes'));
+    const current = snap.exists()?snap.data():{};
+    await setDoc(doc(db,'config','imagenes'),{...current,[key]:url});
+    showToast('✅ Imagen guardada.');
+  } catch(e){showToast('❌ '+e.message,true);}
+};
+
+// YAPE CONFIG
+async function loadYapeConfig() {
+  try {
+    const snap = await getDoc(doc(db,'config','yape'));
+    if (snap.exists()) {
+      const d = snap.data();
+      if (d.qrUrl) {
+        document.getElementById('yape-qr-url').value = d.qrUrl;
+        document.getElementById('prev-yape-qr').innerHTML=`<img src="${d.qrUrl}" style="width:100%;height:100%;object-fit:contain;">`;
+      }
+      if (d.name)  document.getElementById('yape-name').value  = d.name;
+      if (d.phone) document.getElementById('yape-phone').value = d.phone;
+    }
+  } catch(e){}
+}
+
+window.saveYapeConfig = async function() {
+  const qrUrl = document.getElementById('yape-qr-url').value.trim();
+  const name  = document.getElementById('yape-name').value.trim();
+  const phone = document.getElementById('yape-phone').value.trim();
+  try {
+    await setDoc(doc(db,'config','yape'),{qrUrl,name,phone});
+    if (qrUrl) document.getElementById('prev-yape-qr').innerHTML=`<img src="${qrUrl}" style="width:100%;height:100%;object-fit:contain;">`;
+    showToast('✅ Configuración Yape guardada.');
+  } catch(e){showToast('❌ '+e.message,true);}
+};
+
+// ══════════════════════════════════════════
+// USUARIOS
+// ══════════════════════════════════════════
+async function loadUsers() {
+  const grid = document.getElementById('users-grid');
+  try {
+    const snap = await getDocs(collection(db,'usuarios'));
+    const users = [];
+    snap.forEach(d => users.push({id:d.id,...d.data()}));
+
+    // Always show default admin
+    let html = `
+      <div class="user-row">
+        <div class="user-avatar">E</div>
+        <div class="user-info">
+          <div class="user-name">Edinson Marino</div>
+          <div class="user-role admin">👑 ADMINISTRADOR PRINCIPAL</div>
+        </div>
+      </div>`;
+
+    html += users.map(u => `
+      <div class="user-row">
+        <div class="user-avatar" style="background:${u.role==='admin'?'var(--gold)':'var(--teal)'};color:#000;">${(u.name||u.user||'?')[0].toUpperCase()}</div>
+        <div class="user-info">
+          <div class="user-name">${u.name || u.user}</div>
+          <div class="user-role ${u.role}">${u.role==='admin'?'👑 Administrador':'👷 Trabajador'} · @${u.user}</div>
+        </div>
+        <button class="pr-btn del" onclick="deleteUser('${u.id}','${u.name||u.user}')">🗑️ Eliminar</button>
+      </div>`).join('');
+
+    grid.innerHTML = html || '<div class="no-data">No hay usuarios adicionales.</div>';
+  } catch(e) {
+    grid.innerHTML = '<div class="no-data">Error cargando usuarios.</div>';
+  }
+}
+
+window.addUser = async function() {
+  const name = document.getElementById('nu-name').value.trim();
+  const user = document.getElementById('nu-user').value.trim().toLowerCase();
+  const pass = document.getElementById('nu-pass').value;
+  const role = document.getElementById('nu-role').value;
+  if (!name||!user||!pass){showToast('❌ Completa todos los campos.',true);return;}
+  if (pass.length<6){showToast('❌ La contraseña debe tener al menos 6 caracteres.',true);return;}
+  if (user==='edinson'){showToast('❌ Ese usuario ya existe.',true);return;}
+  try {
+    await addDoc(collection(db,'usuarios'),{name,user,pass,role,createdAt:Date.now()});
+    closeModal('modal-add-user');
+    loadUsers();
+    showToast(`✅ Usuario @${user} creado.`);
+    ['nu-name','nu-user','nu-pass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  } catch(e){showToast('❌ '+e.message,true);}
+};
+
+window.deleteUser = async function(id, name) {
+  if (!confirm(`¿Eliminar al usuario ${name}?`)) return;
+  try {
+    await deleteDoc(doc(db,'usuarios',id));
+    loadUsers();
+    showToast('🗑️ Usuario eliminado.');
+  } catch(e){showToast('❌ '+e.message,true);}
+};
+
+// ══════════════════════════════════════════
+// MODALS & UTILS
+// ══════════════════════════════════════════
+window.closeModal = function(id) {
+  document.getElementById(id).style.display='none';
+};
+
+window.showToast = function(msg, err=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(err?' err':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+};
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target===m) m.style.display='none'; });
+});
+
+// Fix tab switching - reset display
+window.switchTab = function(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => { p.classList.remove('active'); p.style.display='none'; });
+  event.target.classList.add('active');
+  const panel = document.getElementById('tab-'+tab);
+  panel.style.display='block';
+  panel.classList.add('active');
+  if(tab==='editor') loadAllEditorData();
+  if(tab==='usuarios') loadUsers();
+  if(tab==='ventas') renderVentas(currentPeriod);
+};
+
+// Fix initial tab
+document.getElementById('tab-pedidos').style.display='block';
+</script>
+</body>
+</html>

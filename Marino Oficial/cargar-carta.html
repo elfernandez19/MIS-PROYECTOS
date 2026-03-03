@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marino — Cargar Carta Completa</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#07080d;color:#eef0ff;font-family:'Courier New',monospace;padding:32px;min-height:100vh;}
+h1{font-size:1.4rem;color:#ffd700;letter-spacing:4px;text-transform:uppercase;margin-bottom:8px;}
+p{color:#6870a0;font-size:.85rem;margin-bottom:24px;}
+.btn{padding:14px 32px;background:#7a28c8;border:none;color:#fff;font-size:.9rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-right:12px;margin-bottom:12px;}
+.btn:hover{background:#9d4de6;}
+.btn:disabled{background:#333;cursor:not-allowed;}
+.btn.green{background:#00cc7a;color:#000;}
+.btn.green:hover{background:#00e896;}
+.log{background:#0e0f18;border:1px solid rgba(255,255,255,.07);padding:20px;margin-top:24px;max-height:400px;overflow-y:auto;font-size:.8rem;line-height:1.8;}
+.log .ok{color:#00cc7a;}
+.log .err{color:#ff4466;}
+.log .info{color:#ffd700;}
+.progress{height:4px;background:#1a1b2e;margin-top:16px;border-radius:2px;}
+.progress-bar{height:100%;background:linear-gradient(90deg,#7a28c8,#00cc7a);border-radius:2px;width:0%;transition:width .3s;}
+</style>
+</head>
+<body>
+
+<h1>🚀 Marino — Cargar Carta Completa</h1>
+<p>Este script carga toda la carta del restaurante y barbería directamente en Firebase. Solo ejecútalo una vez.</p>
+
+<button class="btn green" onclick="loadAll()" id="btn-load">⚡ Cargar Todo a Firebase</button>
+<button class="btn" onclick="clearAll()" id="btn-clear">🗑️ Limpiar y Recargar</button>
+
+<div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+<div class="log" id="log"><div class="info">Listo para cargar. Haz clic en "Cargar Todo a Firebase".</div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDrZx8FNu2wPpc01nCx6XCf7brackxnYuM",
+  authDomain: "marino-chiclayo.firebaseapp.com",
+  projectId: "marino-chiclayo",
+  storageBucket: "marino-chiclayo.firebasestorage.app",
+  messagingSenderId: "637873320955",
+  appId: "1:637873320955:web:e5ab4d1ce1e259443e515e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const log = (msg, type='ok') => {
+  const el = document.getElementById('log');
+  el.innerHTML += `<div class="${type}">${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+};
+
+const setProgress = (pct) => {
+  document.getElementById('progress-bar').style.width = pct + '%';
+};
+
+// ══════════════════════════════════════════
+// CARTA COMPLETA
+// ══════════════════════════════════════════
+
+const MANANA = [
+  // COMBOS MARINOS
+  { name: 'Dúo Marino', price: 30, category: 'Combos Marinos', desc: 'Ceviche carretillero + Chicharrón de pescado o Arroz con mariscos + Inca Kola o Coca Cola 500ml', order: 1 },
+  { name: 'Trío Marino', price: 35, category: 'Combos Marinos', desc: 'Arroz con mariscos + Chicharrón de pescado + Ceviche carretillero + Inca Kola o Coca Cola 500ml', order: 2 },
+
+  // PLATOS PERSONALES
+  { name: 'Ceviche de Tollo c/ Papa Rellena o Tortita de Choclo', price: 12, category: 'Platos Personales', desc: '', order: 10 },
+  { name: 'Chicharrón de Pescado', price: 15, category: 'Platos Personales', desc: '', order: 11 },
+  { name: 'Arroz con Mariscos', price: 15, category: 'Platos Personales', desc: '', order: 12 },
+
+  // PLATOS A LA CARTA
+  { name: 'Bisteck a lo Rico', price: 28, category: 'Platos a la Carta', desc: '', order: 20 },
+  { name: 'Chuleta al Grill', price: 20, category: 'Platos a la Carta', desc: '', order: 21 },
+  { name: 'Pollo al Grill', price: 20, category: 'Platos a la Carta', desc: '', order: 22 },
+  { name: 'Lomito al Jugo', price: 17, category: 'Platos a la Carta', desc: '', order: 23 },
+  { name: 'Chicharrón de Pollo', price: 17, category: 'Platos a la Carta', desc: '', order: 24 },
+  { name: 'Mostrito', price: 17, category: 'Platos a la Carta', desc: '', order: 25 },
+  { name: 'Milanesa', price: 17, category: 'Platos a la Carta', desc: '', order: 26 },
+  { name: 'Chaufa', price: 15, category: 'Platos a la Carta', desc: '', order: 27 },
+
+  // GUARNICIONES
+  { name: 'Yucas Fritas', price: 5, category: 'Guarniciones', desc: '', order: 30 },
+  { name: 'P. Arroz Blanco', price: 5, category: 'Guarniciones', desc: '', order: 31 },
+  { name: 'P. Arroz Chaufa', price: 7, category: 'Guarniciones', desc: '', order: 32 },
+  { name: 'P. Choclo Frito', price: 5, category: 'Guarniciones', desc: '', order: 33 },
+  { name: 'Papa Rellena', price: 5, category: 'Guarniciones', desc: '', order: 34 },
+  { name: 'Tortita de Choclo', price: 5, category: 'Guarniciones', desc: '', order: 35 },
+  { name: 'P. Pequeña de Papas Fritas', price: 5, category: 'Guarniciones', desc: '', order: 36 },
+  { name: 'P. Mediana de Papas Fritas', price: 10, category: 'Guarniciones', desc: '', order: 37 },
+
+  // JUGOS
+  { name: 'Jugo Especial', price: 10, category: 'Jugos y Bebidas', desc: '', order: 40 },
+  { name: 'Jugo de Papaya', price: 10, category: 'Jugos y Bebidas', desc: '', order: 41 },
+  { name: 'Jugo de Piña', price: 10, category: 'Jugos y Bebidas', desc: '', order: 42 },
+  { name: 'Jugo de Fresa con Leche', price: 10, category: 'Jugos y Bebidas', desc: '', order: 43 },
+
+  // REFRESCANTES (1 litro)
+  { name: 'Jarra 1Lt. de Cebada', price: 8, category: 'Jugos y Bebidas', desc: '1 litro', order: 44 },
+  { name: 'Jarra 1Lt. Limonada Americana', price: 12, category: 'Jugos y Bebidas', desc: '1 litro', order: 45 },
+  { name: 'Jarra 1Lt. Chicha Morada', price: 12, category: 'Jugos y Bebidas', desc: '1 litro', order: 46 },
+  { name: 'Jarra 1Lt. Maracuyá', price: 12, category: 'Jugos y Bebidas', desc: '1 litro', order: 47 },
+
+  // FRAPPES
+  { name: 'Frappe Mediano (12 oz)', price: 12, category: 'Jugos y Bebidas', desc: 'Sabores: Oreo, Fresa, Fudge, Café, Algarrobina', order: 48 },
+  { name: 'Frappe Grande (16 oz)', price: 15, category: 'Jugos y Bebidas', desc: 'Sabores: Oreo, Fresa, Fudge, Café, Algarrobina', order: 49 },
+
+  // GASEOSAS
+  { name: 'Inca Kola / Coca Cola 500ml', price: 4, category: 'Jugos y Bebidas', desc: '', order: 50 },
+  { name: 'Inca Kola Gordita', price: 5, category: 'Jugos y Bebidas', desc: '', order: 51 },
+  { name: 'Inca Kola / Coca Cola 1Lt', price: 8, category: 'Jugos y Bebidas', desc: '', order: 52 },
+  { name: 'Inca Kola / Coca Cola 1.5Lt', price: 12, category: 'Jugos y Bebidas', desc: '', order: 53 },
+
+  // CERVEZA
+  { name: 'Pilsen 630ml', price: 10, category: 'Jugos y Bebidas', desc: '', order: 54 },
+];
+
+const NOCHE = [
+  // ALITAS (S/18 c/u)
+  { name: 'Alitas Fritas (6 pz)', price: 18, category: 'Alitas', desc: '6 piezas + porción de papas fritas', order: 1 },
+  { name: 'Alitas BBQ (6 pz)', price: 18, category: 'Alitas', desc: '6 piezas + porción de papas fritas', order: 2 },
+  { name: 'Alitas Búfalo (6 pz)', price: 18, category: 'Alitas', desc: '6 piezas + porción de papas fritas', order: 3 },
+  { name: 'Alitas Mango (6 pz)', price: 18, category: 'Alitas', desc: '6 piezas + porción de papas fritas', order: 4 },
+  { name: 'Alitas Maracuyá (6 pz)', price: 18, category: 'Alitas', desc: '6 piezas + porción de papas fritas', order: 5 },
+  { name: 'Alitas Broaster (5 pz)', price: 18, category: 'Alitas', desc: '5 piezas + arroz blanco', order: 6 },
+  { name: 'Alitas Acevichadas (5 pz)', price: 18, category: 'Alitas', desc: '5 piezas + porción de papas fritas', order: 7 },
+  { name: 'Alitas Crispy (5 pz)', price: 18, category: 'Alitas', desc: '5 piezas + porción de papas fritas', order: 8 },
+  { name: 'Alitas Tamarindo (6 pz)', price: 18, category: 'Alitas', desc: '6 piezas + porción de papas fritas', order: 9 },
+  { name: 'Alitas Maracumango (6 pz)', price: 18, category: 'Alitas', desc: '6 piezas + porción de papas fritas', order: 10 },
+
+  // PROMOCIONES NOCHE
+  { name: 'Festín Sipán', price: 70, category: 'Promociones Noche', desc: '15 alitas crispy + 3 alitas de tu preferencia + 12 und. nuggets de pollo + 1 Inca Kola/Coca Cola 1L 400gr. + papas fritas', order: 20 },
+  { name: 'Ronda Alitas', price: 60, category: 'Promociones Noche', desc: '20 alitas (hasta 4 sabores) + papas fritas + 6 tequeños', order: 21 },
+  { name: 'Trío Mixto', price: 45, category: 'Promociones Noche', desc: '15 alitas (3 sabores diferentes) + papas fritas', order: 22 },
+  { name: 'Trío BBQ', price: 38, category: 'Promociones Noche', desc: '15 alitas bbq + papas fritas', order: 23 },
+  { name: 'Super Promo', price: 35, category: 'Promociones Noche', desc: '12 alitas (2 sabores) + 1/2L chicha morada + papas fritas + arroz blanco/chaufa o ensalada', order: 24 },
+  { name: 'Bisteck a lo Rico', price: 30, category: 'Promociones Noche', desc: 'Bisteck + 2 piezas de chorizo + papas fritas + arroz blanco + huevo a la inglesa + plátanos fritos + ensalada + gaseosa personal', order: 25 },
+  { name: 'Super Mostrito', price: 25, category: 'Promociones Noche', desc: '5 alitas bbq + arroz chaufa + wantan frito + papas fritas + hot dog ahumado', order: 26 },
+
+  // PLATOS A LA CARTA NOCHE
+  { name: 'Chaufa de Pollo', price: 15, category: 'Platos a la Carta Noche', desc: '', order: 30 },
+  { name: 'Chaufa de Carne', price: 15, category: 'Platos a la Carta Noche', desc: '', order: 31 },
+  { name: 'Mostrito', price: 17, category: 'Platos a la Carta Noche', desc: 'Arroz chaufa + milanesa + papas fritas', order: 32 },
+  { name: 'Lomito al Jugo', price: 17, category: 'Platos a la Carta Noche', desc: 'Trozos de lomito de res + papas fritas + arroz blanco', order: 33 },
+  { name: 'Chicharrón de Pollo', price: 17, category: 'Platos a la Carta Noche', desc: 'Bastones de pollo empanizados + papas fritas + arroz + ensalada', order: 34 },
+  { name: 'Milanesa', price: 17, category: 'Platos a la Carta Noche', desc: 'Pechuga de pollo + papas fritas + arroz blanco + ensalada', order: 35 },
+  { name: 'Salchipapa', price: 17, category: 'Platos a la Carta Noche', desc: 'Papas fritas + rodajas de hot dog ahumado + milanesa + huevo frito', order: 36 },
+  { name: 'Pollo al Grill', price: 20, category: 'Platos a la Carta Noche', desc: 'Pechuga de pollo al grill + papas fritas + arroz blanco + ensalada', order: 37 },
+  { name: 'Chuleta al Grill', price: 20, category: 'Platos a la Carta Noche', desc: 'Chuleta de cerdo al grill + papas fritas + arroz blanco + ensalada', order: 38 },
+  { name: 'Caldo de Gallina', price: 15, category: 'Platos a la Carta Noche', desc: '', order: 39 },
+  { name: 'Bísteck a lo Rico', price: 28, category: 'Platos a la Carta Noche', desc: 'Bisteck de carne + 2 piezas de chorizo + papas fritas + arroz blanco + huevo a la inglesa + plátanos fritos + ensalada', order: 40 },
+
+  // GUARNICIONES NOCHE
+  { name: '1 Alita (cualquier sabor)', price: 2.5, category: 'Guarniciones Noche', desc: '', order: 50 },
+  { name: 'P. Pequeña Papas Fritas', price: 5, category: 'Guarniciones Noche', desc: '', order: 51 },
+  { name: 'P. Mediana Papas Fritas', price: 10, category: 'Guarniciones Noche', desc: '', order: 52 },
+  { name: 'P. Grande Papas Fritas', price: 15, category: 'Guarniciones Noche', desc: '', order: 53 },
+  { name: 'P. Nuggets de Pollo (8 und)', price: 15, category: 'Guarniciones Noche', desc: '', order: 54 },
+  { name: 'Tequeños', price: 12, category: 'Guarniciones Noche', desc: '', order: 55 },
+  { name: 'P. Arroz Blanco', price: 5, category: 'Guarniciones Noche', desc: '', order: 56 },
+  { name: 'P. Arroz Chaufa', price: 7, category: 'Guarniciones Noche', desc: '', order: 57 },
+  { name: 'Ensalada', price: 7, category: 'Guarniciones Noche', desc: '', order: 58 },
+
+  // FRAPPES / MILKSHAKES NOCHE
+  { name: 'Frappe Mediano 12oz', price: 12, category: 'Bebidas Noche', desc: 'Sabores: Fresa, Oreo, Manjar, Fudge, Café, Algarrobina, Coco', order: 60 },
+  { name: 'Frappe Grande 16oz', price: 15, category: 'Bebidas Noche', desc: 'Sabores: Fresa, Oreo, Manjar, Fudge, Café, Algarrobina, Coco', order: 61 },
+  { name: 'Milkshake Mediano 12oz', price: 14, category: 'Bebidas Noche', desc: 'Sabores: Fresa, Oreo, Manjar, Fudge, Café, Algarrobina, Coco', order: 62 },
+  { name: 'Milkshake Grande 16oz', price: 17, category: 'Bebidas Noche', desc: 'Sabores: Fresa, Oreo, Manjar, Fudge, Café, Algarrobina, Coco', order: 63 },
+
+  // JUGOS NOCHE
+  { name: 'Jugo Especial', price: 10, category: 'Bebidas Noche', desc: 'Combinación de piña y papaya con leche', order: 64 },
+  { name: 'Jugo de Papaya', price: 10, category: 'Bebidas Noche', desc: '', order: 65 },
+  { name: 'Jugo de Piña', price: 10, category: 'Bebidas Noche', desc: '', order: 66 },
+  { name: 'Jugo de Mango', price: 10, category: 'Bebidas Noche', desc: 'Cremoso jugo de mango con dulzura y frescura tropical', order: 67 },
+  { name: 'Jugo de Maracumango Tropical', price: 10, category: 'Bebidas Noche', desc: 'Combinación de maracuyá y mango', order: 68 },
+
+  // REFRESCANTES NOCHE (1 litro)
+  { name: 'Limonada Americana (1Lt)', price: 12, category: 'Bebidas Noche', desc: '1 litro', order: 69 },
+  { name: 'Chicha Morada (1Lt)', price: 12, category: 'Bebidas Noche', desc: '1 litro', order: 70 },
+  { name: 'Maracuyá (1Lt)', price: 12, category: 'Bebidas Noche', desc: '1 litro', order: 71 },
+  { name: 'Piña (1Lt)', price: 12, category: 'Bebidas Noche', desc: '1 litro', order: 72 },
+
+  // FROZEN
+  { name: 'Frozen Copa', price: 10, category: 'Bebidas Noche', desc: 'Limonada, Maracuyá, Fresa o Piña', order: 73 },
+  { name: 'Frozen 1 Litro', price: 15, category: 'Bebidas Noche', desc: 'Limonada, Maracuyá, Fresa o Piña', order: 74 },
+
+  // GASEOSAS NOCHE
+  { name: 'Inca Kola / Coca Cola 500ml', price: 4, category: 'Bebidas Noche', desc: '', order: 75 },
+  { name: 'Inca Kola / Coca Cola 1Lt', price: 8, category: 'Bebidas Noche', desc: '', order: 76 },
+  { name: 'Inca Kola / Coca Cola 1.5Lt', price: 12, category: 'Bebidas Noche', desc: '', order: 77 },
+
+  // CERVEZAS NOCHE
+  { name: 'Pilsen 630ml', price: 10, category: 'Bebidas Noche', desc: '', order: 78 },
+  { name: 'Cuzqueña', price: 11, category: 'Bebidas Noche', desc: '', order: 79 },
+];
+
+const BARBER_PROMOS = [
+  { name: 'Marino VIP', price: 60, items: 'Todo lo del Premium · 5 min de masajes · Tratamiento facial completo · Cerveza de cortesía · Barba o Pigmentación', order: 1 },
+  { name: 'Premium', price: 35, items: 'Corte · Diseño de cejas · Mascarilla facial básica · Styling (peinado con producto) · Lavado de cabello · Cortesía', order: 2 },
+  { name: 'Estándar', price: 30, items: 'Corte · Diseño de cejas · Lavado de cabello · Cortesía', order: 3 },
+  { name: 'Básico', price: 25, items: 'Corte clásico o degradado', order: 4 },
+];
+
+const BARBER_SERVICIOS = [
+  { name: 'Corte', price: 25, order: 1 },
+  { name: 'Barba', price: 10, order: 2 },
+  { name: 'Diseño de Cejas', price: 5, order: 3 },
+  { name: 'Mascarilla Facial Básica', price: 10, order: 4 },
+  { name: 'Mascarilla Facial Premium', price: 25, order: 5 },
+  { name: 'Masaje Relajante (10 min)', price: 10, order: 6 },
+  { name: 'Lavado de Cabello', price: 5, order: 7 },
+  { name: 'Tratamiento Capilar con Ampolla', price: 15, order: 8 },
+  { name: 'Styling — Peinado con Producto', price: 5, order: 9 },
+  { name: 'Diseño Lineal', price: 5, order: 10 },
+  { name: 'Diseño Libre', price: 15, order: 11 },
+  { name: 'Ondulación o Semiondulación', price: 80, items: 'Corte · Perfilado de cejas · Lavado de cabello · Cortesía', order: 12 },
+  // BEBIDAS BARBER
+  { name: 'Cerveza (Pilsen / Heineken / Tres Cruces)', price: 6, order: 13 },
+  { name: 'Inca Kola o Coca Cola 192ml', price: 2.5, order: 14 },
+  { name: 'Agua / Pepsi / Guaranita', price: 2, order: 15 },
+];
+
+async function clearCollection(colName) {
+  const snap = await getDocs(collection(db, colName));
+  const promises = [];
+  snap.forEach(d => promises.push(deleteDoc(doc(db, colName, d.id))));
+  await Promise.all(promises);
+  log(`🗑️ Colección "${colName}" limpiada (${snap.size} docs)`, 'info');
+}
+
+async function loadCollection(colName, data) {
+  for (const item of data) {
+    await addDoc(collection(db, colName), item);
+  }
+  log(`✅ "${colName}" — ${data.length} productos cargados`, 'ok');
+}
+
+window.loadAll = async function() {
+  const btn = document.getElementById('btn-load');
+  btn.disabled = true;
+  btn.textContent = '⏳ Cargando...';
+  document.getElementById('log').innerHTML = '';
+  setProgress(0);
+
+  try {
+    log('🚀 Iniciando carga completa...', 'info');
+    setProgress(5);
+
+    // Clear existing
+    log('🗑️ Limpiando datos anteriores...', 'info');
+    await clearCollection('productos_rest_manana');
+    await clearCollection('productos_rest_noche');
+    await clearCollection('barber_promos');
+    await clearCollection('barber_servicios');
+    setProgress(20);
+
+    // Load carta mañana
+    log('🍽️ Cargando carta de mañana...', 'info');
+    await loadCollection('productos_rest_manana', MANANA);
+    setProgress(45);
+
+    // Load carta noche
+    log('🌙 Cargando carta de noche...', 'info');
+    await loadCollection('productos_rest_noche', NOCHE);
+    setProgress(65);
+
+    // Load barber promos
+    log('💈 Cargando paquetes barbería...', 'info');
+    await loadCollection('barber_promos', BARBER_PROMOS);
+    setProgress(80);
+
+    // Load barber servicios
+    log('✂️ Cargando servicios barbería...', 'info');
+    await loadCollection('barber_servicios', BARBER_SERVICIOS);
+    setProgress(90);
+
+    // Load textos config
+    log('📝 Configurando textos...', 'info');
+    await setDoc(doc(db,'config','textos'), {
+      hero_tagline: 'UNA VISIÓN, UN NOMBRE, UN LEGADO, DOS MUNDOS.',
+      hero_desc: 'Dos experiencias únicas bajo una misma identidad. Diseñadas para la nueva generación que exige calidad en todo lo que hace.',
+      why_title: '¿Por qué MARINO?',
+      why_p1: 'Marino nació del sueño de un joven emprendedor chiclayano con una visión clara: crear espacios de calidad para la nueva generación.',
+      why_p2: 'Un nombre que evoca fuerza, fluidez y carácter. Dos mundos — gastronomía y estilo — bajo una misma identidad construida con trabajo y orgullo chiclayano.',
+      rest_desc: 'Ceviche, alitas, combos y más. Carta de mañana y noche. Delivery gratis a Sauces, Garita y Ensenada.',
+      barber_desc: 'Barbería para hombres de alto valor. Dos sucursales: Los Sauces y La Pradera. Reserva tu cita ahora.',
+      rest_address: 'Urb. Los Sauces Calle 11 Mz K Lote 4',
+      rest_phone: '990 854 675',
+      barber_phone: '970 736 968',
+    });
+    setProgress(100);
+
+    const total = MANANA.length + NOCHE.length + BARBER_PROMOS.length + BARBER_SERVICIOS.length;
+    log(``, 'ok');
+    log(`🎉 ¡CARGA COMPLETA! ${total} productos en Firebase.`, 'ok');
+    log(`📱 Carta mañana: ${MANANA.length} items`, 'ok');
+    log(`🌙 Carta noche: ${NOCHE.length} items`, 'ok');
+    log(`💈 Paquetes barber: ${BARBER_PROMOS.length} items`, 'ok');
+    log(`✂️ Servicios barber: ${BARBER_SERVICIOS.length} items`, 'ok');
+    log(``, 'ok');
+    log(`✅ Ahora ve a: https://marino-chiclayo-5e010.web.app`, 'info');
+
+    btn.textContent = '✅ ¡Carga Completa!';
+    btn.style.background = '#00cc7a';
+    btn.style.color = '#000';
+
+  } catch(e) {
+    log('❌ ERROR: ' + e.message, 'err');
+    btn.disabled = false;
+    btn.textContent = '⚡ Reintentar';
+  }
+};
+
+window.clearAll = async function() {
+  if (!confirm('¿Limpiar toda la carta y recargar?')) return;
+  await window.loadAll();
+};
+
+</script>
+</body>
+</html>

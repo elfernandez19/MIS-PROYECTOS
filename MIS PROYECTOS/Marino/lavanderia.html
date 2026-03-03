@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marino Lavandería — Solicita tu Servicio</title>
+  <link rel="stylesheet" href="styles-lav.css">
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">MARI<span>N</span>O</a>
+    <a href="index.html" class="nav-back">← Volver al inicio</a>
+  </nav>
+
+  <section id="hero">
+    <div class="hero-content">
+      <p class="hero-tag">// Lavandería · Chiclayo</p>
+      <h1 class="hero-title">MARINO<br><span>LAVANDERÍA</span></h1>
+      <p class="hero-desc">
+        Tenemos un solo objetivo: hacer el trabajo por ti. Recogemos tu ropa, la lavamos y te la devolvemos impecable. Todo gratis el recojo y la entrega.
+      </p>
+      <div class="hero-info">
+        <div class="info-item">🚚 <strong>Recojo y entrega GRATIS</strong></div>
+        <div class="info-item">📞 <strong>990 854 675</strong></div>
+        <div class="info-item">📱 @marinolavanderia</div>
+      </div>
+      <div class="free-badge">✨ Delivery gratis · Cotiza ahora</div>
+    </div>
+  </section>
+
+  <section id="solicitud">
+
+    <div class="reveal">
+      <div class="sec-title">¿Qué ropa necesitas lavar?</div>
+      <div class="sec-desc">
+        Selecciona los tipos de ropa y la cantidad aproximada. Te contactaremos por WhatsApp para coordinar el recojo y el precio exacto.
+      </div>
+
+      <div class="clothes-grid">
+
+        <div class="cloth-item" id="row-c1">
+          <span class="cloth-icon">👕</span>
+          <div class="cloth-info">
+            <div class="cloth-name">Ropa común</div>
+            <div class="cloth-unit">Camisas, pantalones, polos — por kg</div>
+          </div>
+          <div class="cloth-qty">
+            <button class="qty-btn" onclick="changeQty('c1','Ropa común','kg',-1)">−</button>
+            <span class="qty-val" id="qty-c1">0</span>
+            <button class="qty-btn" onclick="changeQty('c1','Ropa común','kg',1)">+</button>
+          </div>
+        </div>
+
+        <div class="cloth-item" id="row-c2">
+          <span class="cloth-icon">🛏️</span>
+          <div class="cloth-info">
+            <div class="cloth-name">Ropa de cama</div>
+            <div class="cloth-unit">Sábanas, frazadas, almohadas — por unidad</div>
+          </div>
+          <div class="cloth-qty">
+            <button class="qty-btn" onclick="changeQty('c2','Ropa de cama','unidad',-1)">−</button>
+            <span class="qty-val" id="qty-c2">0</span>
+            <button class="qty-btn" onclick="changeQty('c2','Ropa de cama','unidad',1)">+</button>
+          </div>
+        </div>
+
+        <div class="cloth-item" id="row-c3">
+          <span class="cloth-icon">👗</span>
+          <div class="cloth-info">
+            <div class="cloth-name">Ropa delicada</div>
+            <div class="cloth-unit">Vestidos, ropa interior — por kg</div>
+          </div>
+          <div class="cloth-qty">
+            <button class="qty-btn" onclick="changeQty('c3','Ropa delicada','kg',-1)">−</button>
+            <span class="qty-val" id="qty-c3">0</span>
+            <button class="qty-btn" onclick="changeQty('c3','Ropa delicada','kg',1)">+</button>
+          </div>
+        </div>
+
+        <div class="cloth-item" id="row-c4">
+          <span class="cloth-icon">👟</span>
+          <div class="cloth-info">
+            <div class="cloth-name">Zapatillas</div>
+            <div class="cloth-unit">Por par</div>
+          </div>
+          <div class="cloth-qty">
+            <button class="qty-btn" onclick="changeQty('c4','Zapatillas','par',-1)">−</button>
+            <span class="qty-val" id="qty-c4">0</span>
+            <button class="qty-btn" onclick="changeQty('c4','Zapatillas','par',1)">+</button>
+          </div>
+        </div>
+
+        <div class="cloth-item" id="row-c5">
+          <span class="cloth-icon">🧣</span>
+          <div class="cloth-info">
+            <div class="cloth-name">Toallas</div>
+            <div class="cloth-unit">Por unidad</div>
+          </div>
+          <div class="cloth-qty">
+            <button class="qty-btn" onclick="changeQty('c5','Toallas','unidad',-1)">−</button>
+            <span class="qty-val" id="qty-c5">0</span>
+            <button class="qty-btn" onclick="changeQty('c5','Toallas','unidad',1)">+</button>
+          </div>
+        </div>
+
+        <div class="cloth-item" id="row-c6">
+          <span class="cloth-icon">🪟</span>
+          <div class="cloth-info">
+            <div class="cloth-name">Cortinas</div>
+            <div class="cloth-unit">Por unidad</div>
+          </div>
+          <div class="cloth-qty">
+            <button class="qty-btn" onclick="changeQty('c6','Cortinas','unidad',-1)">−</button>
+            <span class="qty-val" id="qty-c6">0</span>
+            <button class="qty-btn" onclick="changeQty('c6','Cortinas','unidad',1)">+</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="price-note">
+        💡 <strong>¿Cómo funciona el precio?</strong> El costo depende del tipo y cantidad de ropa. Una vez que nos envíes tu solicitud por WhatsApp, te cotizamos al instante. <strong>El recojo y la entrega siempre son gratis.</strong>
+      </div>
+    </div>
+
+  </section>
+
+  <footer>© 2025 Marino Lavandería · Chiclayo · 📞 990 854 675 · @marinolavanderia</footer>
+
+  <!-- ORDER TOGGLE -->
+  <button class="order-toggle" id="order-toggle" onclick="toggleOrderPanel()" style="display:none;">
+    🧺 Mi Solicitud <span class="order-badge" id="order-badge">0</span>
+  </button>
+
+  <!-- ORDER PANEL -->
+  <div class="order-panel" id="order-panel">
+    <div class="order-inner">
+      <div class="order-title">
+        Mi Solicitud
+        <button class="order-close" onclick="closeOrderPanel()">✕</button>
+      </div>
+
+      <div class="order-list" id="order-list">
+        <div class="order-empty">Aún no has seleccionado nada.</div>
+      </div>
+
+      <div class="form-row" style="margin-top:16px;">
+        <div class="form-group">
+          <label class="form-label">Tu nombre</label>
+          <input type="text" class="form-input" id="inp-name" placeholder="Ej: Ana García">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dirección de recojo</label>
+          <input type="text" class="form-input" id="inp-address" placeholder="Calle, Urb., referencia">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Horario preferido de recojo</label>
+          <input type="text" class="form-input" id="inp-horario" placeholder="Ej: Mañana 9am">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notas (opcional)</label>
+          <input type="text" class="form-input" id="inp-notes" placeholder="Instrucciones especiales">
+        </div>
+      </div>
+
+      <button class="wa-btn" id="wa-btn" onclick="sendWhatsApp()" disabled>
+        💬 Solicitar servicio por WhatsApp
+      </button>
+    </div>
+  </div>
+
+  <script src="script-lav.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Coloca aquí los iconos generados desde:
+https://www.pwabuilder.com/imageGenerator
+
+Archivos necesarios:
+- icon-72.png
+- icon-96.png
+- icon-128.png
+- icon-144.png
+- icon-152.png
+- icon-192.png
+- icon-384.png
+- icon-512.png
+
+Sube el logo de Marino (mínimo 512x512px) al generador.

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marino Barber — Reserva tu Cita</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#030f0a">
+<link rel="stylesheet" href="styles-barber.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">MARI<span>N</span>O</a>
+  <a href="index.html" class="nav-back">← Inicio</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-content">
+    <p class="hero-tag">// Barbería · Dos Mundos · Para hombres de alto valor</p>
+    <h1 class="hero-title">MARINO<br><span>BARBER</span></h1>
+    <p class="hero-desc" id="barber-desc">Cortes precisos, tratamientos premium y una experiencia diseñada para el hombre que cuida su imagen. Dos sucursales, una sola calidad.</p>
+    <div class="hero-info">
+      <div class="info-item"><span>📞</span><a href="tel:970736968" id="barber-phone">970 736 968</a></div>
+      <div class="info-item"><span>📱</span>@marinobarberr</div>
+    </div>
+  </div>
+</section>
+
+<section id="servicios">
+
+  <!-- ELEGIR SUCURSAL -->
+  <div class="reveal">
+    <div class="sec-title">1. Elige tu Sucursal</div>
+    <div class="sec-subtitle">Selecciona en qué local quieres atenderte antes de reservar.</div>
+    <div class="sucursal-grid">
+      <div class="sucursal-card" id="suc-sauces" onclick="chooseSucursal('sauces','Los Sauces — Mz M1 Lote 23, 2da Etapa')">
+        <div class="suc-tag">Sucursal 1</div>
+        <div class="suc-name">Los Sauces</div>
+        <div class="suc-address">📍 Urb. Los Sauces<br>Mz M1 Lote 23, 2da Etapa<br>Chiclayo</div>
+      </div>
+      <div class="sucursal-card" id="suc-pradera" onclick="chooseSucursal('pradera','La Pradera — Av. Principal Mz D Lote 1')">
+        <div class="suc-tag">Sucursal 2</div>
+        <div class="suc-name">La Pradera</div>
+        <div class="suc-address">📍 La Pradera<br>Av. Principal Mz D Lote 1<br>Chiclayo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAQUETES -->
+  <div class="reveal">
+    <div class="sec-title">2. Elige tu Paquete</div>
+    <div class="sec-subtitle">Selecciona un paquete o servicios individuales (o ambos).</div>
+    <div class="promos-grid" id="promos-grid">
+      <div class="menu-loading">⏳ Cargando paquetes...</div>
+    </div>
+  </div>
+
+  <!-- SERVICIOS INDIVIDUALES -->
+  <div class="reveal">
+    <div class="sec-title">3. Servicios Individuales</div>
+    <div class="service-items" id="servicios-list">
+      <div class="menu-loading">⏳ Cargando servicios...</div>
+    </div>
+  </div>
+
+</section>
+
+<footer>© 2025 Marino Barber · Chiclayo · 📞 970 736 968</footer>
+
+<button class="order-toggle" id="order-toggle" onclick="toggleOrderPanel()" style="display:none;">
+  💈 Mi Reserva <span class="order-badge" id="order-badge">0</span>
+</button>
+
+<div class="order-panel" id="order-panel">
+  <div class="order-inner">
+    <div class="order-title">Mi Reserva <button class="order-close" onclick="closeOrderPanel()">✕</button></div>
+    <div class="suc-warning" id="suc-warning">⚠️ Por favor selecciona una sucursal primero.</div>
+    <div class="order-list" id="order-list"><div class="order-empty">Aún no has seleccionado nada.</div></div>
+    <div class="order-total-row">
+      <span class="order-total-label">Total referencial</span>
+      <span class="order-total-val" id="order-total">S/0.00</span>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tu nombre</label><input type="text" class="form-input" id="inp-name" placeholder="Ej: Carlos Díaz"></div>
+      <div class="form-group"><label class="form-label">Fecha y hora preferida</label><input type="text" class="form-input" id="inp-fecha" placeholder="Ej: Mañana 3pm"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">Notas / referencia de estilo</label>
+      <textarea class="form-input" id="inp-notes" placeholder="Degradado bajo, foto de referencia, etc."></textarea>
+    </div>
+    <button class="wa-btn" id="wa-btn" onclick="sendWhatsApp()" disabled>💬 Reservar cita por WhatsApp</button>
+  </div>
+</div>
+
+<style>.menu-loading{padding:32px;text-align:center;color:#6da880;font-size:.85rem;letter-spacing:2px;}</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDrZx8FNu2wPpc01nCx6XCf7brackxnYuM",
+  authDomain: "marino-chiclayo.firebaseapp.com",
+  projectId: "marino-chiclayo",
+  storageBucket: "marino-chiclayo.firebasestorage.app",
+  messagingSenderId: "637873320955",
+  appId: "1:637873320955:web:e5ab4d1ce1e259443e515e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const PHONE = '51970736968';
+let selectedPromo    = null;
+let selectedSucursal = null;
+const selectedServices = {};
+
+// ── TEXTOS ────────────────────────────────
+async function loadTextos() {
+  try {
+    const snap = await getDoc(doc(db,'config','textos'));
+    if (snap.exists()) {
+      const d = snap.data();
+      if (d.barber_desc)  document.getElementById('barber-desc').textContent  = d.barber_desc;
+      if (d.barber_phone) document.getElementById('barber-phone').textContent = d.barber_phone;
+    }
+  } catch(e){}
+}
+
+// ── PROMOS ────────────────────────────────
+onSnapshot(collection(db,'barber_promos'), snap => {
+  const items = [];
+  snap.forEach(d=>items.push({id:d.id,...d.data()}));
+  items.sort((a,b)=>(a.order||0)-(b.order||0));
+  renderPromos(items.length ? items : defaultPromos());
+});
+
+function defaultPromos() {
+  return [
+    {id:'vip',     name:'Marino VIP', price:60, items:'Todo lo del Premium · 5 min masajes · Tratamiento facial completo · Cerveza de cortesía · Barba o Pigmentación'},
+    {id:'premium', name:'Premium',    price:35, items:'Corte · Diseño de cejas · Mascarilla facial básica · Styling · Lavado de cabello · Cortesía'},
+    {id:'estandar',name:'Estándar',   price:30, items:'Corte · Diseño de cejas · Lavado de cabello · Cortesía'},
+    {id:'basico',  name:'Básico',     price:25, items:'Corte clásico o degradado'},
+  ];
+}
+
+function renderPromos(promos) {
+  document.getElementById('promos-grid').innerHTML = promos.map(p=>`
+    <div class="promo-card" id="promo-${p.id}" onclick="selectPromo('${p.id}',\`${esc(p.name)}\`,${p.price||0})">
+      <div class="promo-header">
+        <div class="promo-name">${p.name}</div>
+        <div class="promo-price">S/${parseFloat(p.price||0).toFixed(0)}</div>
+      </div>
+      <div class="promo-items">${p.items||''}</div>
+    </div>`).join('');
+}
+
+// ── SERVICIOS ─────────────────────────────
+onSnapshot(collection(db,'barber_servicios'), snap => {
+  const items = [];
+  snap.forEach(d=>items.push({id:d.id,...d.data()}));
+  items.sort((a,b)=>(a.order||0)-(b.order||0));
+  renderServicios(items.length ? items : defaultServicios());
+});
+
+function defaultServicios() {
+  return [
+    {id:'s1',name:'Corte',price:25},{id:'s2',name:'Barba',price:10},{id:'s3',name:'Diseño de Cejas',price:5},
+    {id:'s4',name:'Mascarilla Facial Básica',price:10},{id:'s5',name:'Mascarilla Facial Premium',price:25},
+    {id:'s6',name:'Masaje Relajante (10 min)',price:10},{id:'s7',name:'Lavado de Cabello',price:5},
+    {id:'s8',name:'Tratamiento Capilar con Ampolla',price:15},{id:'s9',name:'Styling',price:5},
+    {id:'s10',name:'Diseño Lineal',price:5},{id:'s11',name:'Diseño Libre',price:15},
+    {id:'s12',name:'Ondulación o Semiondulación',price:80},
+  ];
+}
+
+function renderServicios(services) {
+  document.getElementById('servicios-list').innerHTML = services.map(s=>{
+    const sid = 'sv_'+s.id.replace(/[^a-zA-Z0-9]/g,'_');
+    return `
+      <div class="service-item" id="row-${sid}">
+        <span class="si-name">${s.name}</span>
+        <span class="si-price">S/${parseFloat(s.price||0).toFixed(0)}</span>
+        <div class="si-qty">
+          <button class="qty-btn" onclick="changeQty('${sid}',\`${esc(s.name)}\`,${s.price||0},-1)">−</button>
+          <span class="qty-val" id="qty-${sid}">0</span>
+          <button class="qty-btn" onclick="changeQty('${sid}',\`${esc(s.name)}\`,${s.price||0},1)">+</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function esc(s){ return (s||'').replace(/`/g,'\\`').replace(/\$/g,'\\$'); }
+
+// ── LOGIC ─────────────────────────────────
+window.chooseSucursal = function(id, name) {
+  selectedSucursal = {id,name};
+  document.querySelectorAll('.sucursal-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('suc-'+id)?.classList.add('selected');
+  updateOrderUI();
+};
+
+window.selectPromo = function(id, name, price) {
+  if (selectedPromo?.id===id) {
+    selectedPromo=null;
+    document.getElementById('promo-'+id)?.classList.remove('selected');
+  } else {
+    if(selectedPromo) document.getElementById('promo-'+selectedPromo.id)?.classList.remove('selected');
+    selectedPromo={id,name,price};
+    document.getElementById('promo-'+id)?.classList.add('selected');
+  }
+  updateOrderUI();
+};
+
+window.changeQty = function(id,name,price,delta) {
+  if(!selectedServices[id]) selectedServices[id]={name,price,qty:0};
+  selectedServices[id].qty=Math.max(0,selectedServices[id].qty+delta);
+  const el=document.getElementById('qty-'+id);
+  if(el)el.textContent=selectedServices[id].qty;
+  const row=document.getElementById('row-'+id);
+  if(row)row.classList.toggle('selected',selectedServices[id].qty>0);
+  if(selectedServices[id].qty===0) delete selectedServices[id];
+  updateOrderUI();
+};
+
+function updateOrderUI() {
+  const svcItems=Object.values(selectedServices);
+  let total=svcItems.reduce((s,i)=>s+i.price*i.qty,0);
+  let count=svcItems.reduce((s,i)=>s+i.qty,0);
+  if(selectedPromo){total+=selectedPromo.price;count++;}
+
+  document.getElementById('order-badge').textContent=count;
+  document.getElementById('order-toggle').style.display=count>0?'flex':'none';
+  document.getElementById('suc-warning').style.display=(!selectedSucursal&&count>0)?'block':'none';
+
+  let html='';
+  if(selectedSucursal) html+=`<div class="order-row order-row-suc"><span class="order-row-name">📍 ${selectedSucursal.name}</span></div>`;
+  if(selectedPromo)    html+=`<div class="order-row"><span class="order-row-name">📦 ${selectedPromo.name}</span><span class="order-row-price">S/${selectedPromo.price.toFixed(2)}</span></div>`;
+  svcItems.forEach(i=>{ html+=`<div class="order-row"><span class="order-row-name">${i.qty}x ${i.name}</span><span class="order-row-price">S/${(i.price*i.qty).toFixed(2)}</span></div>`; });
+  document.getElementById('order-list').innerHTML=html||'<div class="order-empty">Aún no has seleccionado nada.</div>';
+  document.getElementById('order-total').textContent=`S/${total.toFixed(2)}`;
+  document.getElementById('wa-btn').disabled=count===0||!selectedSucursal;
+}
+
+window.toggleOrderPanel=()=>document.getElementById('order-panel').classList.toggle('open');
+window.closeOrderPanel =()=>document.getElementById('order-panel').classList.remove('open');
+
+window.sendWhatsApp = function() {
+  const svcItems=Object.values(selectedServices);
+  if(!selectedPromo&&!svcItems.length) return;
+  if(!selectedSucursal){alert('Por favor selecciona una sucursal.');return;}
+
+  const name  = document.getElementById('inp-name').value.trim()  || 'Cliente';
+  const fecha = document.getElementById('inp-fecha').value.trim() || 'A confirmar';
+  const notes = document.getElementById('inp-notes').value.trim() || '';
+  let total=svcItems.reduce((s,i)=>s+i.price*i.qty,0);
+  if(selectedPromo)total+=selectedPromo.price;
+
+  const serviceKey = selectedSucursal.id==='sauces'?'barber_sauces':'barber_pradera';
+  const allItems=[];
+  if(selectedPromo) allItems.push({name:`Paquete ${selectedPromo.name}`,qty:1,price:selectedPromo.price});
+  svcItems.forEach(i=>allItems.push(i));
+
+  try {
+    const orders=JSON.parse(localStorage.getItem('marino_orders')||'[]');
+    const now=new Date();
+    orders.push({id:Date.now(),service:serviceKey,items:allItems,total,customer:{name,fecha},date:now.toISOString(),day:now.toLocaleDateString('es-PE'),month:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,year:String(now.getFullYear())});
+    localStorage.setItem('marino_orders',JSON.stringify(orders));
+  }catch(e){}
+
+  let msg=`✂️ *RESERVA DE CITA — MARINO BARBER*\n\n`;
+  msg+=`📍 *Sucursal:* ${selectedSucursal.name}\n`;
+  msg+=`👤 *Nombre:* ${name}\n📅 *Fecha/hora:* ${fecha}\n\n💈 *Servicios:*\n`;
+  if(selectedPromo)msg+=`  • Paquete ${selectedPromo.name} — S/${selectedPromo.price.toFixed(2)}\n`;
+  svcItems.forEach(i=>{msg+=`  • ${i.qty}x ${i.name} — S/${(i.price*i.qty).toFixed(2)}\n`;});
+  msg+=`\n💰 *Total referencial:* S/${total.toFixed(2)}\n`;
+  if(notes)msg+=`📝 *Notas:* ${notes}\n`;
+  msg+=`\n_Reserva desde marinochiclayo.com_`;
+  window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+// ── INIT ─────────────────────────────────
+loadTextos();
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

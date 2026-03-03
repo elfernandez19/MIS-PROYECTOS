@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marino Barber — Reserva tu Cita</title>
+  <link rel="stylesheet" href="styles-barber.css">
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">MARI<span>N</span>O</a>
+    <a href="index.html" class="nav-back">← Inicio</a>
+  </nav>
+
+  <section id="hero">
+    <div class="hero-content">
+      <p class="hero-tag">// Barbería · Dos Mundos · Para hombres de alto valor</p>
+      <h1 class="hero-title">MARINO<br><span>BARBER</span></h1>
+      <p class="hero-desc">Cortes precisos, tratamientos premium y una experiencia diseñada para el hombre que cuida su imagen. Dos sucursales, una sola calidad.</p>
+      <div class="hero-info">
+        <div class="info-item"><span>📞</span><a href="tel:970736968">970 736 968</a></div>
+        <div class="info-item"><span>📱</span>@marinobarberr</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="servicios">
+
+    <!-- ELEGIR SUCURSAL -->
+    <div class="reveal">
+      <div class="sec-title">1. Elige tu Sucursal</div>
+      <div class="sec-subtitle">Selecciona en qué local quieres atenderte antes de reservar tu cita.</div>
+      <div class="sucursal-grid">
+
+        <div class="sucursal-card" id="suc-sauces" onclick="chooseSucursal('sauces','Los Sauces — Mz M1 Lote 23, 2da Etapa')">
+          <div class="suc-tag">Sucursal 1</div>
+          <div class="suc-name">Los Sauces</div>
+          <div class="suc-address">
+            📍 Urb. Los Sauces<br>
+            Mz M1 Lote 23, 2da Etapa<br>
+            Chiclayo
+          </div>
+        </div>
+
+        <div class="sucursal-card" id="suc-pradera" onclick="chooseSucursal('pradera','La Pradera — Av. Principal Mz D Lote 1')">
+          <div class="suc-tag">Sucursal 2</div>
+          <div class="suc-name">La Pradera</div>
+          <div class="suc-address">
+            📍 La Pradera<br>
+            Av. Principal Mz D Lote 1<br>
+            Chiclayo
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PAQUETES -->
+    <div class="reveal">
+      <div class="sec-title">2. Elige tu Paquete</div>
+      <div class="sec-subtitle">Selecciona un paquete o servicios individuales (o ambos).</div>
+      <div class="promos-grid">
+
+        <div class="promo-card" id="promo-vip" onclick="selectPromo('vip','Marino VIP',60)">
+          <div class="promo-header">
+            <div class="promo-name">Marino VIP</div>
+            <div class="promo-price">S/60</div>
+          </div>
+          <div class="promo-items">Todo lo del Premium · 5 min masajes · Tratamiento facial completo · Cerveza de cortesía · Barba o Pigmentación</div>
+        </div>
+
+        <div class="promo-card" id="promo-premium" onclick="selectPromo('premium','Premium',35)">
+          <div class="promo-header">
+            <div class="promo-name">Premium</div>
+            <div class="promo-price">S/35</div>
+          </div>
+          <div class="promo-items">Corte · Diseño de cejas · Mascarilla facial básica · Styling · Lavado de cabello · Cortesía</div>
+        </div>
+
+        <div class="promo-card" id="promo-estandar" onclick="selectPromo('estandar','Estándar',30)">
+          <div class="promo-header">
+            <div class="promo-name">Estándar</div>
+            <div class="promo-price">S/30</div>
+          </div>
+          <div class="promo-items">Corte · Diseño de cejas · Lavado de cabello · Cortesía</div>
+        </div>
+
+        <div class="promo-card" id="promo-basico" onclick="selectPromo('basico','Básico',25)">
+          <div class="promo-header">
+            <div class="promo-name">Básico</div>
+            <div class="promo-price">S/25</div>
+          </div>
+          <div class="promo-items">Corte clásico o degradado</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SERVICIOS INDIVIDUALES -->
+    <div class="reveal">
+      <div class="sec-title">3. Servicios Individuales</div>
+      <div class="service-items">
+        <div class="service-item" id="row-s1"><span class="si-name">Corte</span><span class="si-price">S/25</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s1','Corte',25,-1)">−</button><span class="qty-val" id="qty-s1">0</span><button class="qty-btn" onclick="changeQty('s1','Corte',25,1)">+</button></div></div>
+        <div class="service-item" id="row-s2"><span class="si-name">Barba</span><span class="si-price">S/10</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s2','Barba',10,-1)">−</button><span class="qty-val" id="qty-s2">0</span><button class="qty-btn" onclick="changeQty('s2','Barba',10,1)">+</button></div></div>
+        <div class="service-item" id="row-s3"><span class="si-name">Diseño de Cejas</span><span class="si-price">S/5</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s3','Diseño de Cejas',5,-1)">−</button><span class="qty-val" id="qty-s3">0</span><button class="qty-btn" onclick="changeQty('s3','Diseño de Cejas',5,1)">+</button></div></div>
+        <div class="service-item" id="row-s4"><span class="si-name">Mascarilla Facial Básica</span><span class="si-price">S/10</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s4','Mascarilla Facial Básica',10,-1)">−</button><span class="qty-val" id="qty-s4">0</span><button class="qty-btn" onclick="changeQty('s4','Mascarilla Facial Básica',10,1)">+</button></div></div>
+        <div class="service-item" id="row-s5"><span class="si-name">Mascarilla Facial Premium</span><span class="si-price">S/25</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s5','Mascarilla Facial Premium',25,-1)">−</button><span class="qty-val" id="qty-s5">0</span><button class="qty-btn" onclick="changeQty('s5','Mascarilla Facial Premium',25,1)">+</button></div></div>
+        <div class="service-item" id="row-s6"><span class="si-name">Masaje Relajante (10 min)</span><span class="si-price">S/10</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s6','Masaje Relajante',10,-1)">−</button><span class="qty-val" id="qty-s6">0</span><button class="qty-btn" onclick="changeQty('s6','Masaje Relajante',10,1)">+</button></div></div>
+        <div class="service-item" id="row-s7"><span class="si-name">Lavado de Cabello</span><span class="si-price">S/5</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s7','Lavado de Cabello',5,-1)">−</button><span class="qty-val" id="qty-s7">0</span><button class="qty-btn" onclick="changeQty('s7','Lavado de Cabello',5,1)">+</button></div></div>
+        <div class="service-item" id="row-s8"><span class="si-name">Tratamiento Capilar con Ampolla</span><span class="si-price">S/15</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s8','Tratamiento Capilar',15,-1)">−</button><span class="qty-val" id="qty-s8">0</span><button class="qty-btn" onclick="changeQty('s8','Tratamiento Capilar',15,1)">+</button></div></div>
+        <div class="service-item" id="row-s9"><span class="si-name">Styling (Peinado con producto)</span><span class="si-price">S/5</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s9','Styling',5,-1)">−</button><span class="qty-val" id="qty-s9">0</span><button class="qty-btn" onclick="changeQty('s9','Styling',5,1)">+</button></div></div>
+        <div class="service-item" id="row-s10"><span class="si-name">Diseño Lineal</span><span class="si-price">S/5</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s10','Diseño Lineal',5,-1)">−</button><span class="qty-val" id="qty-s10">0</span><button class="qty-btn" onclick="changeQty('s10','Diseño Lineal',5,1)">+</button></div></div>
+        <div class="service-item" id="row-s11"><span class="si-name">Diseño Libre</span><span class="si-price">S/15</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s11','Diseño Libre',15,-1)">−</button><span class="qty-val" id="qty-s11">0</span><button class="qty-btn" onclick="changeQty('s11','Diseño Libre',15,1)">+</button></div></div>
+        <div class="service-item" id="row-s12"><span class="si-name">Ondulación o Semiondulación</span><span class="si-price">S/80</span><div class="si-qty"><button class="qty-btn" onclick="changeQty('s12','Ondulación/Semiondulación',80,-1)">−</button><span class="qty-val" id="qty-s12">0</span><button class="qty-btn" onclick="changeQty('s12','Ondulación/Semiondulación',80,1)">+</button></div></div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer>© 2025 Marino Barber · Chiclayo · 📞 970 736 968 · @marinobarberr</footer>
+
+  <button class="order-toggle" id="order-toggle" onclick="toggleOrderPanel()" style="display:none;">
+    💈 Mi Reserva <span class="order-badge" id="order-badge">0</span>
+  </button>
+
+  <div class="order-panel" id="order-panel">
+    <div class="order-inner">
+      <div class="order-title">Mi Reserva <button class="order-close" onclick="closeOrderPanel()">✕</button></div>
+      <div class="suc-warning" id="suc-warning">⚠️ Por favor selecciona una sucursal primero.</div>
+      <div class="order-list" id="order-list"><div class="order-empty">Aún no has seleccionado nada.</div></div>
+      <div class="order-total-row">
+        <span class="order-total-label">Total referencial</span>
+        <span class="order-total-val" id="order-total">S/0.00</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Tu nombre</label><input type="text" class="form-input" id="inp-name" placeholder="Ej: Carlos Díaz"></div>
+        <div class="form-group"><label class="form-label">Fecha y hora preferida</label><input type="text" class="form-input" id="inp-fecha" placeholder="Ej: Mañana 3pm"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label class="form-label">Notas / referencia de estilo (opcional)</label>
+        <textarea class="form-input" id="inp-notes" placeholder="Degradado bajo, foto de referencia, etc."></textarea>
+      </div>
+      <button class="wa-btn" id="wa-btn" onclick="sendWhatsApp()" disabled>💬 Reservar cita por WhatsApp</button>
+    </div>
+  </div>
+
+  <script src="script-barber.js"></script>
+</body>
+</html>
