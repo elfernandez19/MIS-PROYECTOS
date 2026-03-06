@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<!-- DOCTYPE le dice al navegador que este archivo usa HTML5 (la versión moderna) -->
+<html lang="es">
+<!-- lang="es" indica que el idioma de la página es español -->
+
+<head>
+  <!-- HEAD contiene configuración de la página, no se muestra visualmente -->
+
+  <meta charset="UTF-8"/>
+  <!-- charset="UTF-8" permite tildes, ñ y caracteres especiales -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- viewport hace que la página se adapte al tamaño del dispositivo (responsivo) -->
+
+  <title>Botica Santillán</title>
+  <!-- TITLE aparece en la pestaña del navegador -->
+
+  <link rel="stylesheet" href="style.css"/>
+  <!-- Vincula este HTML con el archivo de estilos style.css -->
+</head>
+
+<body>
+<!-- BODY contiene todo el contenido visible de la página -->
+
+<!-- ============================================================
+     ENCABEZADO PRINCIPAL
+     Barra superior con el nombre y botón de editar
+     ============================================================ -->
+<header>
+  <h1>💊 <span id="bizName">Botica Santillán</span></h1>
+  <!-- id="bizName" permite que JavaScript actualice el nombre dinámicamente -->
+
+  <button class="edit-name-btn" onclick="openEditName()">✏️ Editar nombre</button>
+  <!-- onclick ejecuta la función openEditName() al hacer clic -->
+</header>
+
+<!-- ============================================================
+     BARRA DE NAVEGACIÓN
+     Pestañas para cambiar entre las secciones de la app
+     ============================================================ -->
+<nav>
+  <button class="active" onclick="showTab('dashboard')">📊 Dashboard</button>
+  <!-- class="active" resalta visualmente la pestaña seleccionada -->
+  <button onclick="showTab('inventario')">📦 Inventario</button>
+  <button onclick="showTab('ventas')">🛒 Ventas</button>
+  <button onclick="showTab('clientes')">👥 Clientes</button>
+  <button onclick="showTab('reportes')">📈 Reportes</button>
+  <button onclick="showTab('config')">⚙️ Config</button>
+</nav>
+
+<!-- ============================================================
+     CONTENIDO PRINCIPAL
+     Solo la sección con clase "active" es visible en pantalla
+     ============================================================ -->
+<main>
+
+  <!-- ==================== DASHBOARD ==================== -->
+  <!-- Pantalla de inicio con resumen del negocio -->
+  <div id="tab-dashboard" class="section active">
+
+    <!-- Tarjetas con estadísticas clave del día -->
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="val" id="st-ventashoy">0</div>
+        <div class="lbl">Ventas hoy</div>
+      </div>
+      <div class="stat">
+        <div class="val" id="st-ingresos">S/ 0</div>
+        <div class="lbl">Ingresos hoy</div>
+      </div>
+      <div class="stat">
+        <div class="val" id="st-productos">0</div>
+        <div class="lbl">Productos</div>
+      </div>
+      <div class="stat">
+        <div class="val" id="st-stockbajo">0</div>
+        <div class="lbl">Stock bajo</div>
+        <!-- Este número se pone en rojo automáticamente si hay alertas -->
+      </div>
+    </div>
+
+    <!-- Aquí aparecen las alertas de productos con stock bajo -->
+    <div id="alertas-wrap"></div>
+
+    <!-- Últimas ventas del día -->
+    <div class="card">
+      <h2>🕒 Últimas ventas</h2>
+      <div id="dash-ventas">
+        <div class="empty">Sin ventas aún</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INVENTARIO ==================== -->
+  <!-- Gestión de productos: agregar, editar, eliminar -->
+  <div id="tab-inventario" class="section">
+
+    <!-- Formulario para agregar un producto nuevo -->
+    <div class="card">
+      <h2>➕ Agregar producto</h2>
+      <div class="form-row">
+        <input id="inv-nombre" placeholder="Nombre del producto"/>
+        <select id="inv-cat">
+          <option>Medicamentos</option>
+          <option>Vitaminas</option>
+          <option>Cuidado personal</option>
+          <option>Bebés</option>
+          <option>Otros</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <input id="inv-precio" type="number" placeholder="Precio venta (S/)" min="0" step="0.1"/>
+        <!-- step="0.1" permite ingresar valores con un decimal, ej: 12.5 -->
+        <input id="inv-costo" type="number" placeholder="Costo (S/)" min="0" step="0.1"/>
+        <!-- El costo se usa para calcular la ganancia en reportes -->
+        <input id="inv-stock" type="number" placeholder="Stock inicial" min="0"/>
+      </div>
+      <div class="form-row">
+        <input id="inv-vencimiento" type="date"/>
+        <!-- type="date" muestra un selector de fecha nativo del navegador -->
+        <input id="inv-stock-min" type="number" placeholder="Stock mínimo" min="0" value="5"/>
+        <!-- Cuando el stock baje de este número, aparece una alerta en el dashboard -->
+      </div>
+      <button class="btn btn-primary" onclick="addProducto()">Agregar producto</button>
+    </div>
+
+    <!-- Tabla del inventario actual con búsqueda -->
+    <div class="card">
+      <h2>📦 Inventario actual</h2>
+      <div class="form-row">
+        <input id="inv-buscar" placeholder="Buscar producto..." oninput="renderInventario()"/>
+        <!-- oninput filtra la tabla en tiempo real mientras se escribe -->
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th><th>Categoría</th><th>Precio</th>
+              <th>Stock</th><th>Vencimiento</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-inv">
+            <!-- JavaScript rellena esta sección con los productos -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VENTAS ==================== -->
+  <!-- Registrar nuevas ventas e historial -->
+  <div id="tab-ventas" class="section">
+
+    <!-- Formulario para crear una nueva venta -->
+    <div class="card">
+      <h2>🛒 Nueva venta</h2>
+      <div class="form-row">
+        <input id="v-cliente" placeholder="Cliente (opcional)"/>
+        <select id="v-pago">
+          <!-- Métodos de pago disponibles -->
+          <option>Efectivo</option>
+          <option>Yape</option>
+          <option>Plin</option>
+          <option>Tarjeta</option>
+        </select>
+      </div>
+
+      <!-- Los productos seleccionados para la venta se muestran aquí -->
+      <div id="v-items-wrap"></div>
+
+      <button class="btn btn-success btn-sm" onclick="addVentaItem()" style="margin-bottom:10px">
+        + Agregar producto
+      </button><br>
+
+      <!-- Vista previa del total antes de confirmar -->
+      <div id="v-total-preview" style="font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:10px"></div>
+
+      <button class="btn btn-primary" onclick="registrarVenta()">Registrar venta</button>
+    </div>
+
+    <!-- Historial de ventas con buscador -->
+    <div class="card">
+      <h2>📋 Historial de ventas</h2>
+      <div class="form-row">
+        <input id="v-buscar" placeholder="Buscar por cliente..." oninput="renderHistorialVentas()"/>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Cliente</th><th>Pago</th>
+              <th>Total</th><th>Fecha</th><th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-historial">
+            <!-- JavaScript llenará esta sección -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CLIENTES ==================== -->
+  <!-- Registro de clientes con consulta automática de DNI/RUC -->
+  <div id="tab-clientes" class="section">
+
+    <div class="card">
+      <h2>➕ Agregar cliente</h2>
+
+      <!-- Fila de consulta DNI/RUC -->
+      <div class="dni-row">
+        <input id="cl-doc"
+          placeholder="DNI (8 dígitos) o RUC (11 dígitos)"
+          maxlength="11"
+          oninput="onDocInput('cl')"/>
+        <!-- maxlength="11" limita a 11 dígitos (tamaño máximo del RUC) -->
+        <!-- oninput detecta en tiempo real si es DNI (8) o RUC (11) -->
+
+        <!-- Etiqueta automática que indica "DNI" o "RUC" -->
+        <span id="cl-doc-badge" class="dni-badge" style="display:none"></span>
+
+        <button class="btn btn-primary btn-sm" onclick="consultarDoc('cl')">
+          🔍 Consultar
+        </button>
+      </div>
+
+      <!-- Resultado de la consulta: nombre encontrado o mensaje de error -->
+      <div id="cl-doc-info" class="dni-info"></div>
+
+      <div class="form-row">
+        <input id="cl-nombre" placeholder="Nombre (se llena automático)"/>
+        <!-- Este campo se llena automáticamente con el resultado del DNI/RUC -->
+        <input id="cl-telefono" placeholder="Teléfono"/>
+      </div>
+      <div class="form-row">
+        <input id="cl-email" placeholder="Email (opcional)"/>
+      </div>
+      <button class="btn btn-primary" onclick="addCliente()">Agregar cliente</button>
+    </div>
+
+    <!-- Lista de clientes registrados con buscador -->
+    <div class="card">
+      <h2>👥 Lista de clientes</h2>
+      <div class="form-row">
+        <input id="cl-buscar" placeholder="Buscar por nombre o doc..." oninput="renderClientes()"/>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th><th>Doc.</th><th>Tipo</th>
+              <th>Teléfono</th><th>Compras</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-clientes">
+            <tr><td colspan="6" class="empty">Sin clientes aún</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== REPORTES ==================== -->
+  <!-- Estadísticas avanzadas con gráfico y ranking -->
+  <div id="tab-reportes" class="section">
+
+    <div class="stats-grid">
+      <div class="stat"><div class="val" id="r-total">S/ 0</div><div class="lbl">Ingresos totales</div></div>
+      <div class="stat"><div class="val" id="r-count">0</div><div class="lbl">Total ventas</div></div>
+      <div class="stat"><div class="val" id="r-ganancia">S/ 0</div><div class="lbl">Ganancia est.</div></div>
+      <!-- Ganancia = precio de venta - costo de compra -->
+      <div class="stat"><div class="val" id="r-promedio">S/ 0</div><div class="lbl">Ticket promedio</div></div>
+    </div>
+
+    <!-- Gráfico de barras generado dinámicamente por JavaScript -->
+    <div class="card">
+      <h2>📈 Ventas por día (últimos 7 días)</h2>
+      <div class="chart-bar-wrap" id="chart-dias"></div>
+    </div>
+
+    <!-- Ranking de productos más vendidos -->
+    <div class="card">
+      <h2>🏆 Productos más vendidos</h2>
+      <div id="top-productos">
+        <div class="empty">Sin datos aún</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CONFIGURACIÓN ==================== -->
+  <!-- Datos del negocio y limpieza de datos -->
+  <div id="tab-config" class="section">
+
+    <div class="card">
+      <h2>⚙️ Configuración</h2>
+      <div class="form-row">
+        <input id="cfg-nombre" placeholder="Nombre del negocio"/>
+        <button class="btn btn-primary" onclick="saveConfig()">Guardar nombre</button>
+      </div>
+      <div class="form-row">
+        <input id="cfg-dir" placeholder="Dirección"/>
+        <input id="cfg-tel" placeholder="Teléfono"/>
+      </div>
+      <button class="btn btn-success" style="margin-top:4px" onclick="saveConfigFull()">
+        Guardar todo
+      </button>
+    </div>
+
+    <!-- Zona peligrosa: elimina datos de forma permanente -->
+    <div class="card">
+      <h2>🗑️ Zona de peligro</h2>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">
+        Estas acciones son irreversibles.
+      </p>
+      <button class="btn btn-danger btn-sm" onclick="clearVentas()">Eliminar historial</button>
+      &nbsp;
+      <button class="btn btn-danger btn-sm" onclick="clearInventario()">Eliminar inventario</button>
+      &nbsp;
+      <button class="btn btn-danger btn-sm" onclick="clearClientes()">Eliminar clientes</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ============================================================
+     MODALES (VENTANAS EMERGENTES)
+     Ocultas por defecto, se activan desde JavaScript
+     ============================================================ -->
+
+<!-- Modal para editar el nombre del negocio -->
+<div class="modal-overlay" id="modal-name">
+  <div class="modal">
+    <h3>✏️ Editar nombre</h3>
+    <input id="modal-name-input" placeholder="Nuevo nombre"/>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="saveEditName()">Guardar</button>
+      <button class="btn btn-gray" onclick="closeModal('modal-name')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar un producto del inventario -->
+<div class="modal-overlay" id="modal-edit-prod">
+  <div class="modal">
+    <h3>✏️ Editar producto</h3>
+    <input id="ep-nombre" placeholder="Nombre"/>
+    <select id="ep-cat">
+      <option>Medicamentos</option><option>Vitaminas</option>
+      <option>Cuidado personal</option><option>Bebés</option><option>Otros</option>
+    </select>
+    <input id="ep-precio" type="number" placeholder="Precio venta"/>
+    <input id="ep-costo" type="number" placeholder="Costo"/>
+    <input id="ep-stock" type="number" placeholder="Stock"/>
+    <input id="ep-stockmin" type="number" placeholder="Stock mínimo"/>
+    <input id="ep-venc" type="date"/>
+    <input type="hidden" id="ep-id"/>
+    <!-- type="hidden" guarda el ID sin mostrarlo, para saber cuál producto editar -->
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="saveEditProd()">Guardar</button>
+      <button class="btn btn-gray" onclick="closeModal('modal-edit-prod')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar un cliente -->
+<div class="modal-overlay" id="modal-edit-cl">
+  <div class="modal">
+    <h3>✏️ Editar cliente</h3>
+    <input id="ecl-doc" placeholder="DNI o RUC"/>
+    <input id="ecl-nombre" placeholder="Nombre"/>
+    <input id="ecl-tel" placeholder="Teléfono"/>
+    <input id="ecl-email" placeholder="Email"/>
+    <input type="hidden" id="ecl-id"/>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="saveEditCl()">Guardar</button>
+      <button class="btn btn-gray" onclick="closeModal('modal-edit-cl')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Carga el archivo JavaScript al final del body -->
+<!-- Ponerlo aquí asegura que todo el HTML ya existe cuando el JS se ejecuta -->
+<script src="script.js"></script>
+</body>
+</html>
